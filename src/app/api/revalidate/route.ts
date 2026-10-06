@@ -1,20 +1,22 @@
 import { revalidateTag } from 'next/cache'
 
-import { verifyWebhookSignature, webhookChanges, type WebhookPayload } from '@8ux-co/eelzap'
+import { verifyWebhookSignature, type WebhookPayload } from '@8ux-co/eelzap'
 
 import { env } from '@/lib/env'
-import { tagsForChanges } from '@/lib/revalidation'
+import { tagsForEvent } from '@/lib/revalidation'
 
 /**
- * Zap's webhook (Nest → workspace settings → Webhooks, events `zap.item.*`,
- * `zap.document.*`, `zap.media.*`, narrowed to this site), pointed at
- * `https://<site>/api/revalidate`.
+ * Zap's webhook (Nest → workspace settings → Webhooks), pointed at
+ * `https://<site>/api/revalidate` and narrowed to this site. Recommended
+ * events: `zap.item.*`, `zap.document.*`, `zap.media.*`, `zap.collection.*`,
+ * `zap.seo.updated`, `zap.schema.field_changed`, `zap.site.updated`.
  *
  * The signature is checked over the raw body with the endpoint's `whsec_`
  * secret; a stale timestamp or a bad signature is 401 and changes nothing.
  * Each change expires the cache tag of its collection or document, so the
- * pages that read it render fresh on their next visit (ISR); media changes
- * expire everything, since any page may show the file.
+ * pages that read it render fresh on their next visit (ISR). Media, SEO,
+ * collection, schema and site events expire everything; drafts, assignments
+ * and comments expire nothing (`tagsForEvent`).
  */
 export async function POST(request: Request) {
   const secret = env.webhookSecret
@@ -32,11 +34,7 @@ export async function POST(request: Request) {
     return Response.json({ error: 'invalid_body' }, { status: 400 })
   }
 
-  const siteKey = env.siteKey
-  const changes = webhookChanges(event).filter(
-    (change) => !change.siteKey || change.siteKey === siteKey,
-  )
-  const tags = tagsForChanges(changes)
+  const tags = tagsForEvent(event, env.siteKey)
   // `expire: 0`: the next visit renders fresh content, never the stale page.
   for (const tag of tags) revalidateTag(tag, { expire: 0 })
 

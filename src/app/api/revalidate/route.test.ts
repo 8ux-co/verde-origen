@@ -73,6 +73,24 @@ describe('POST /api/revalidate', () => {
     expect(revalidateTag).toHaveBeenCalledWith('zap:document:inicio', { expire: 0 })
   })
 
+  it('expires everything for a signed SEO change (metadata and sitemap read it)', async () => {
+    const response = await post(
+      signed({
+        ...itemPublished,
+        type: 'zap.seo.updated',
+        data: { site: { id: 's', key: 'verde-origen' } },
+      }),
+    )
+    expect(response.status).toBe(200)
+    expect(revalidateTag).toHaveBeenCalledWith('zap', { expire: 0 })
+  })
+
+  it('revalidates nothing for a draft update', async () => {
+    const response = await post(signed({ ...itemPublished, type: 'zap.item.draft_updated' }))
+    expect(response.status).toBe(200)
+    expect(revalidateTag).not.toHaveBeenCalled()
+  })
+
   it('refuses a delivery signed with another secret, and revalidates nothing', async () => {
     const response = await post(signed(itemPublished, { secret: 'whsec_someone_else' }))
     expect(response.status).toBe(401)

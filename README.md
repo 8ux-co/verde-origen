@@ -48,8 +48,11 @@ What the site uses, and where:
 | Media upload and publish (public API)                                              | `scripts/seed.ts`                                                                          |
 
 Published reads go through Next's data cache, tagged `zap:collection:<key>`
-and `zap:document:<key>`. The webhook expires the tags of whatever changed
-(media changes expire everything). Collections are read whole, one request
+and `zap:document:<key>`. The webhook expires the tags of whatever changed:
+an entry its collection, a document itself. Media, SEO, collection, schema and
+site events expire everything, since they can touch any page, its metadata or
+the sitemap. Draft, assignment and comment events are ignored: drafts never
+reach the live site. Collections are read whole, one request
 each, so a full build makes about a dozen requests: Zap allows a site key 100
 a minute, and the client retries a 429 on its own.
 
@@ -124,9 +127,10 @@ origins `SEED_PREVIEW_ORIGINS` (comma-separated). The paths are in
 One setting stays by hand, once per environment:
 
 - the webhook endpoint (Nest → workspace settings → Webhooks): URL
-  `https://<site>/api/revalidate`, events `zap.item.*`, `zap.document.*`,
-  `zap.media.*`, narrowed to this site; its `whsec_` secret goes in
-  `EELZAP_WEBHOOK_SECRET`.
+  `https://<site>/api/revalidate`, narrowed to this site, subscribed to
+  `zap.item.*`, `zap.document.*`, `zap.media.*`, `zap.collection.*`,
+  `zap.seo.updated`, `zap.schema.field_changed` and `zap.site.updated`. Its
+  `whsec_` secret goes in `EELZAP_WEBHOOK_SECRET`.
 
 ## Local preview against a local Zap
 
