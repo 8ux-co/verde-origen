@@ -195,7 +195,7 @@ export default async function OrigenPage({ params }: Props) {
             ratio="16/9"
             sizes="(min-width: 1024px) 840px, 100vw"
             className="bg-[#DCE1D6]! text-hoja"
-            emptyLabel="Mapa"
+            emptyLabel="Mapa · 16:9"
             empty={
               <ContourMap
                 seed={origen.slug.length * 17}

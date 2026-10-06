@@ -6,11 +6,11 @@ import { cleanStega } from '@8ux-co/eelzap'
 import { fields } from '@8ux-co/eelzap/fields'
 
 import { BlogCard } from '@/components/blog-card'
-import { regionLabel } from '@/components/cafe-card'
 import { Photo } from '@/components/photo'
 import { RichText } from '@/components/rich-text'
 import { ArrowLink, Breadcrumbs, Initials } from '@/components/ui'
 import type { BlogItem, PersonasItem } from '@/generated/cms'
+import { regionText } from '@/lib/catalog'
 import {
   findBySlug,
   getCollection,
@@ -82,11 +82,12 @@ function AuthorMark({ author, size }: { author: PersonasItem; size: 'sm' | 'lg' 
 
 export default async function ArticuloPage({ params }: Props) {
   const { slug } = await params
-  const [post, posts, personas, cafes] = await Promise.all([
+  const [post, posts, personas, cafes, origenes] = await Promise.all([
     getItem('blog', slug),
     getPosts(),
     getPersonas(),
     getCollection('cafes'),
+    getCollection('origenes'),
   ])
   if (!post) notFound()
 
@@ -110,13 +111,6 @@ export default async function ArticuloPage({ params }: Props) {
                 {
                   label: <span {...f.attrs('categoria')}>{c.categoria?.label}</span>,
                   href: `/blog?categoria=${c.categoria?.value}`,
-                },
-                {
-                  label: (
-                    <span className="inline-block max-w-[18ch] truncate align-bottom">
-                      {cleanStega(c.titulo)}
-                    </span>
-                  ),
                 },
               ]}
             />
@@ -187,7 +181,7 @@ export default async function ArticuloPage({ params }: Props) {
                 </Link>
                 <div className="flex flex-col gap-2">
                   <span className="eyebrow eyebrow--sm">
-                    Lote {k.text('lote')} · {regionLabel(cafe)}
+                    Lote {k.text('lote')} · {regionText(cafe, origenes)}
                     <span className="hidden lg:inline">, {k.text('municipio')}</span>
                   </span>
                   <h3 className="m-0 font-display text-[26px] leading-[0.95] font-extrabold uppercase lg:text-[32px]">
@@ -214,7 +208,10 @@ export default async function ArticuloPage({ params }: Props) {
                     Ver el café
                   </ArrowLink>
                 </div>
-                <Link href={`/cafes/${cafe.slug}`} className="btn btn--sm hidden lg:inline-flex">
+                <Link
+                  href={`/cafes/${cafe.slug}`}
+                  className="btn btn--sm btn--buy hidden lg:inline-flex"
+                >
                   Ver el café
                 </Link>
               </aside>
@@ -259,12 +256,10 @@ export default async function ArticuloPage({ params }: Props) {
               </ArrowLink>
             </div>
             <div className="grid gap-9 md:grid-cols-2 lg:grid-cols-3 lg:gap-10">
-              {more.map((other) => (
-                <BlogCard
-                  key={other.slug}
-                  post={other}
-                  author={findBySlug(personas, other.content.autor)}
-                />
+              {more.map((other, i) => (
+                <div key={other.slug} className={i === 2 ? 'hidden lg:block' : ''}>
+                  <BlogCard post={other} author={findBySlug(personas, other.content.autor)} />
+                </div>
               ))}
             </div>
           </div>

@@ -90,7 +90,7 @@ export default async function CafesPage() {
         text="Cuéntanos qué tomas y cómo lo preparas. Te respondemos con uno, casi siempre el mismo día."
         actions={
           <>
-            <Link href="/contacto" className="btn btn--dark">
+            <Link href="/contacto" className="btn btn--dark w-full lg:w-auto">
               Escríbenos
             </Link>
             <Link href="/preguntas-frecuentes" className="btn hidden lg:inline-flex">

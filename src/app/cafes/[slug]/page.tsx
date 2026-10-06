@@ -1,16 +1,18 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { cleanStega } from '@8ux-co/eelzap'
 import { fields } from '@8ux-co/eelzap/fields'
 
 import { CafeBuyBox } from '@/components/cafe-buy-box'
-import { bagLabel, CafeCard, regionLabel, VarietyLabel } from '@/components/cafe-card'
+import { bagLabel, CafeCard, VarietyLabel } from '@/components/cafe-card'
 import { CafeGallery } from '@/components/cafe-gallery'
 import { Photo, type PhotoSource } from '@/components/photo'
 import { RichText } from '@/components/rich-text'
 import { AltitudeRange, ArrowLink, Breadcrumbs } from '@/components/ui'
 import type { CafesItem, OrigenesItem } from '@/generated/cms'
+import { regionText, relatedCafes } from '@/lib/catalog'
 import {
   assertRelations,
   findBySlug,
@@ -20,6 +22,7 @@ import {
   getPublishedCollection,
 } from '@/lib/content'
 import {
+  formatCOP,
   formatDecimal,
   formatInt,
   formatRoastDay,
@@ -63,18 +66,6 @@ function placePhrase(cafe: CafesItem, origen: OrigenesItem | null): string {
   return /^vereda\b/i.test(vereda) ? `de la ${lower}` : `del ${lower}`
 }
 
-/** Same region or process, up to three, never the coffee itself. */
-function related(cafe: CafesItem, cafes: CafesItem[]): CafesItem[] {
-  return cafes
-    .filter((other) => other.slug !== cafe.slug)
-    .filter(
-      (other) =>
-        other.content.region.value === cafe.content.region.value ||
-        other.content.proceso.value === cafe.content.proceso.value,
-    )
-    .slice(0, 3)
-}
-
 export default async function CafePage({ params }: Props) {
   const { slug } = await params
   const [cafe, cafes, origenes] = await Promise.all([
@@ -102,7 +93,8 @@ export default async function CafePage({ params }: Props) {
   }
 
   const recipes = pairs(f.text('preparacion'))
-  const relatedCafes = related(cafe, cafes)
+  const related = relatedCafes(cafe, cafes)
+  const region = regionText(cafe, origenes)
 
   return (
     <>
@@ -119,14 +111,14 @@ export default async function CafePage({ params }: Props) {
           <CafeGallery
             photos={photos}
             galleryAttrs={f.attrs('galeria')}
-            bag={bagLabel(cafe)}
+            bag={bagLabel(cafe, region)}
             name={cleanStega(c.nombre)}
           />
 
           <div className="flex flex-col gap-[22px] lg:gap-[26px]">
             <div className="flex flex-col gap-3 lg:gap-4">
               <span className="eyebrow lg:text-[15px]!">
-                Lote {f.text('lote')} · <span {...f.attrs('region')}>{regionLabel(cafe)}</span>,{' '}
+                Lote {f.text('lote')} · <span {...f.attrs('region')}>{region}</span>,{' '}
                 {f.text('municipio')}
               </span>
               <h1 className="m-0 font-display text-(length:--fl-cafe) leading-[0.88] font-black tracking-[-0.005em] text-balance uppercase">
@@ -155,7 +147,8 @@ export default async function CafePage({ params }: Props) {
                 precio_500: f.attrs('precio_500'),
                 precio_1kg: f.attrs('precio_1kg'),
               }}
-              roastNote={`Tostado el ${roast}. Sale de Bogotá al día siguiente; envío gratis desde $ 150.000.`}
+              roastNote={`Tostado el ${roast}. Sale de Bogotá al día siguiente.`}
+              shippingNote={`Envío gratis desde ${formatCOP(150_000)}.`}
             />
           </div>
         </div>
@@ -175,7 +168,12 @@ export default async function CafePage({ params }: Props) {
               <div>
                 <dt>Finca</dt>
                 <dd>
-                  <a href={`/origenes/${origen.slug}`}>Finca {o.text('nombre')}</a>
+                  <Link
+                    href={`/origenes/${origen.slug}`}
+                    className="underline underline-offset-[3px]"
+                  >
+                    Finca {o.text('nombre')}
+                  </Link>
                 </dd>
               </div>
             ) : null}
@@ -287,7 +285,9 @@ export default async function CafePage({ params }: Props) {
               dark
             />
             <div className="flex flex-col gap-[14px] lg:gap-5">
-              <span className="eyebrow eyebrow--on-dark">El origen de este café</span>
+              <span className="eyebrow eyebrow--on-dark">
+                El origen<span className="hidden lg:inline"> de este café</span>
+              </span>
               <h2 className="m-0 font-display text-(length:--fl-h2-xl) leading-[0.92] font-extrabold text-balance text-niebla uppercase">
                 Finca {o.text('nombre')}
               </h2>
@@ -327,10 +327,10 @@ export default async function CafePage({ params }: Props) {
       ) : null}
 
       {/* También te puede gustar */}
-      {relatedCafes.length > 0 ? (
+      {related.length > 0 ? (
         <section className="wrap py-12 lg:py-28">
           <div className="mb-6 flex items-end justify-between lg:mb-12">
-            <h2 className="m-0 font-display text-(length:--fl-h2-md) leading-[0.92] font-extrabold text-balance uppercase">
+            <h2 className="m-0 font-display text-(length:--fl-h2-md) leading-[0.92] font-extrabold text-balance uppercase max-lg:text-[36px] max-lg:tracking-[-0.01em]">
               También te puede gustar
             </h2>
             <ArrowLink href="/cafes" className="hidden lg:inline-flex">
@@ -338,8 +338,10 @@ export default async function CafePage({ params }: Props) {
             </ArrowLink>
           </div>
           <div className="grid grid-cols-2 gap-x-[14px] gap-y-7 lg:grid-cols-3 lg:gap-10">
-            {relatedCafes.map((other) => (
-              <CafeCard key={other.slug} cafe={other} />
+            {related.map((other, i) => (
+              <div key={other.slug} className={i === 2 ? 'hidden lg:block' : ''}>
+                <CafeCard cafe={other} />
+              </div>
             ))}
           </div>
         </section>

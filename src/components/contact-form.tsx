@@ -147,7 +147,7 @@ export function ContactForm({ asuntos, datosUrl }: { asuntos: string[]; datosUrl
           />
           <span>
             Autorizo a Verde Origen a usar mis datos para responder este mensaje, según la{' '}
-            <a href={datosUrl} className="text-tinta">
+            <a href={datosUrl} className="text-tinta underline underline-offset-[3px]">
               política de tratamiento de datos personales
             </a>
             .

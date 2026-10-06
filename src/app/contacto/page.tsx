@@ -148,11 +148,12 @@ export default async function ContactoPage() {
               ratio="4/3"
               sizes="(min-width: 1024px) 520px, 100vw"
               className="bg-[#DCE1D6]! text-hoja"
-              emptyLabel="Mapa"
+              emptyLabel="Mapa · 4:3"
               empty={
                 <ContourMap
                   seed={59}
                   summits={[{ x: 400, y: 300, scale: 1.3 }]}
+                  river="M-10,305 C200,300 600,285 810,280 M390,-10 C395,200 405,420 415,610"
                   pins={[{ label: 'Taller', x: 50, y: 48 }]}
                 />
               }

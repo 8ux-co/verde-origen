@@ -19,7 +19,7 @@ export function Breadcrumbs({ items, className = '' }: { items: Crumb[]; classNa
           const last = i === items.length - 1
           return (
             <li key={i} className="inline-flex items-center gap-[10px]">
-              {last || !item.href ? (
+              {!item.href ? (
                 <span aria-current={last ? 'page' : undefined} className="text-tinta">
                   {item.label}
                 </span>

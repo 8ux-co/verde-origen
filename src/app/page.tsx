@@ -134,7 +134,7 @@ export default async function InicioPage() {
 
       {/* Cafés destacados */}
       {destacados.length > 0 ? (
-        <section className="section rule-top">
+        <section className="section rule-top lg:border-t-0">
           <div className="wrap">
             <SectionHead
               eyebrow={f.text('destacados_antetitulo')}
@@ -158,7 +158,7 @@ export default async function InicioPage() {
               ))}
             </div>
             <div className="mt-8 lg:hidden">
-              <Link href="/cafes" className="btn">
+              <Link href="/cafes" className="btn w-full lg:w-auto">
                 Ver los {numberWord(cafes.length)} cafés
               </Link>
             </div>
@@ -284,6 +284,11 @@ export default async function InicioPage() {
                   <BlogCard post={post} author={findBySlug(personas, post.content.autor)} />
                 </div>
               ))}
+            </div>
+            <div className="mt-8 lg:hidden">
+              <Link href="/blog" className="btn w-full">
+                Ir al diario
+              </Link>
             </div>
           </div>
         </section>

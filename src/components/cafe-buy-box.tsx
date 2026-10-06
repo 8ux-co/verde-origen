@@ -29,10 +29,13 @@ export function CafeBuyBox({
   cafe: delivered,
   attrs,
   roastNote,
+  shippingNote,
 }: {
   cafe: CafesItem
   attrs: Record<SizeKey, { 'data-zap'?: string }>
   roastNote: string
+  /** Desktop only, as on the boards. */
+  shippingNote?: string
 }) {
   const cafe = useZapLiveUpdates(delivered)
   const id = useId()
@@ -119,10 +122,25 @@ export function CafeBuyBox({
                   ) : null}
                 </span>
                 <span
-                  className={`font-display text-[19px] leading-none font-bold tracking-[0.02em] ${checked ? 'text-cereza' : ''}`}
-                  {...attrs[option.key]}
+                  className={`inline-flex items-center gap-[6px] font-display text-[19px] leading-none font-bold tracking-[0.02em] ${checked ? 'text-cereza' : ''}`}
                 >
-                  {soldOut ? 'Agotado' : money(optionValue)}
+                  {/* The tag sits on the price alone: the preview rewrites its whole text. */}
+                  <span {...attrs[option.key]}>{soldOut ? 'Agotado' : money(optionValue)}</span>
+                  {checked ? (
+                    <svg
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M20 6 9 17l-5-5" />
+                    </svg>
+                  ) : null}
                 </span>
               </label>
             )
@@ -138,7 +156,7 @@ export function CafeBuyBox({
           {MOLIENDAS.map((option) => (
             <label
               key={option}
-              className={`inline-flex h-10 cursor-pointer items-center rounded-full px-[14px] font-story text-[16px] leading-none ${
+              className={`inline-flex h-[42px] cursor-pointer items-center rounded-[2px] px-[14px] font-story text-[16px] leading-none ${
                 option === molienda
                   ? 'border-2 border-tinta bg-papel'
                   : 'border-[1.5px] border-linea'
@@ -259,13 +277,20 @@ export function CafeBuyBox({
           aria-hidden="true"
           className="mt-[2px] hidden shrink-0 lg:block"
         >
-          <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
-          <path d="M15 18H9" />
-          <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
-          <circle cx="17" cy="18" r="2" />
-          <circle cx="7" cy="18" r="2" />
+          <path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z" />
+          <path d="M12 22V12" />
+          <path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7" />
         </svg>
-        {added ? 'Agregado al carrito.' : roastNote}
+        <span>
+          {added ? (
+            'Agregado al carrito.'
+          ) : (
+            <>
+              {roastNote}
+              {shippingNote ? <span className="hidden lg:inline"> {shippingNote}</span> : null}
+            </>
+          )}
+        </span>
       </p>
     </div>
   )

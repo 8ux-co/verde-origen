@@ -56,7 +56,7 @@ export function SiteHeader({
   return (
     <>
       {aviso ? (
-        <div className="bg-hoja px-5 py-[9px] text-center font-display text-[12px] leading-[1.35] font-semibold tracking-[0.12em] text-niebla uppercase lg:py-3 lg:text-[14px]">
+        <div className="bg-hoja px-5 py-[9px] text-center font-display text-[12px] leading-[1.35] font-semibold tracking-[0.12em] text-niebla uppercase max-lg:tracking-[0.08em] lg:py-3 lg:text-[14px]">
           {aviso}
         </div>
       ) : null}

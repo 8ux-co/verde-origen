@@ -4,24 +4,21 @@ import { cleanStega } from '@8ux-co/eelzap'
 import { fields } from '@8ux-co/eelzap/fields'
 
 import type { CafesItem } from '@/generated/cms'
+import { regionText } from '@/lib/catalog'
+import { getCollection } from '@/lib/content'
 import { formatInt, money, notesSentence, pesos } from '@/lib/format'
 
 import { AddButton } from './cart'
 import { Photo, type BagLabel } from './photo'
 
 /** «Huila» for one region, «Varias regiones» for a blend. */
-export function regionLabel(cafe: CafesItem): string {
-  return cafe.content.region?.value === 'varias'
-    ? 'Varias regiones'
-    : (cafe.content.region?.label ?? '')
-}
 
-export function bagLabel(cafe: CafesItem): BagLabel {
+export function bagLabel(cafe: CafesItem, region: string): BagLabel {
   const c = cafe.content
   return {
     lote: c.lote,
     nombre: c.nombre,
-    meta: `${regionLabel(cafe)} · ${formatInt(c.altitud)} msnm`,
+    meta: `${region} · ${formatInt(c.altitud)} msnm`,
   }
 }
 
@@ -39,7 +36,8 @@ export function VarietyLabel({ cafe }: { cafe: CafesItem }) {
  * A coffee card. Desktop: the full card (ficha line, notes, price, Agregar).
  * Mobile: the compact card of the 2-column grid.
  */
-export function CafeCard({ cafe, priority }: { cafe: CafesItem; priority?: boolean }) {
+export async function CafeCard({ cafe, priority }: { cafe: CafesItem; priority?: boolean }) {
+  const region = regionText(cafe, await getCollection('origenes'))
   const f = fields(cafe)
   const c = cafe.content
   const href = `/cafes/${cafe.slug}`
@@ -58,12 +56,12 @@ export function CafeCard({ cafe, priority }: { cafe: CafesItem; priority?: boole
           ratio="4/5"
           sizes="(min-width: 1024px) 400px, 50vw"
           priority={priority}
-          bag={bagLabel(cafe)}
+          bag={bagLabel(cafe, region)}
         />
       </Link>
       <div className="flex flex-col gap-[6px] lg:mt-[18px] lg:gap-[10px] lg:border-t-[1.5px] lg:border-tinta lg:pt-5">
-        <span className="eyebrow text-[11px]! lg:text-[13px]!">
-          Lote {f.text('lote')} · <span {...f.attrs('region')}>{regionLabel(cafe)}</span>
+        <span className="eyebrow overflow-hidden text-[11px]! text-ellipsis whitespace-nowrap lg:text-[13px]!">
+          Lote {f.text('lote')} · <span {...f.attrs('region')}>{region}</span>
           <span className="hidden lg:inline">, {f.text('municipio')}</span>
         </span>
         <Link href={href} className="no-underline">

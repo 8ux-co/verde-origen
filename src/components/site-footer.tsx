@@ -41,8 +41,8 @@ export function SiteFooter({
   return (
     <footer className="bg-hoja text-niebla">
       <div className="wrap pt-[72px] pb-10 lg:pt-[88px] lg:pb-9">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1.3fr_0.8fr]">
-          <div>
+        <div className="grid grid-cols-2 gap-x-5 gap-y-9 md:gap-12 lg:grid-cols-[1.6fr_1fr_1.3fr_0.8fr]">
+          <div className="col-span-2 md:col-span-1">
             <Link
               href="/"
               aria-label={`${brand}, inicio`}
@@ -65,7 +65,7 @@ export function SiteFooter({
 
           <div>
             <h2 className={heading}>{COPY.explore}</h2>
-            <ul className="m-0 flex list-none flex-col gap-3 p-0">
+            <ul className="m-0 flex list-none flex-col gap-3 p-0 font-story text-[17px] leading-[1.35]">
               {navItems(config).map((nav) => (
                 <li key={nav.href}>
                   <Link href={nav.href} className={item}>
@@ -81,7 +81,7 @@ export function SiteFooter({
             </ul>
           </div>
 
-          <div>
+          <div className="order-last col-span-2 md:order-none md:col-span-1">
             <h2 className={heading}>{COPY.shop}</h2>
             <div className="flex flex-col gap-[14px] font-story text-[17px] leading-[1.45]">
               <p className="m-0">
@@ -120,7 +120,7 @@ export function SiteFooter({
           {socials.length > 0 ? (
             <div>
               <h2 className={heading}>{COPY.follow}</h2>
-              <ul className="m-0 flex list-none flex-col gap-3 p-0">
+              <ul className="m-0 flex list-none flex-col gap-3 p-0 font-story text-[17px] leading-[1.35]">
                 {socials.map(([key, label]) => (
                   <li key={key}>
                     <a
@@ -142,7 +142,7 @@ export function SiteFooter({
           <span className="font-story text-[15px] leading-[1.4] text-hoja-texto">
             © {new Date().getFullYear()} {f.text('razon_social')}
             {cleanStega(f.text('razon_social')).endsWith('.') ? ' ' : '. '}
-            {COPY.pricesNote}
+            <span className="hidden lg:inline">{COPY.pricesNote}</span>
           </span>
           <div className="flex flex-wrap gap-x-7 gap-y-2">
             {legal.map(([key, label]) => (

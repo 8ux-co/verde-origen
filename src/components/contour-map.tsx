@@ -16,7 +16,13 @@ interface ContourMapProps {
   pins: MapPin[]
   seed?: number
   summits?: Array<{ x: number; y: number; scale: number }>
+  /** A river or road across the relief, in the 800 × 600 viewBox; `null` for none. */
+  river?: string | null
 }
+
+/** The Magdalena-like line the boards draw through the valleys. */
+export const DEFAULT_RIVER =
+  'M-10,470 C90,430 150,500 240,450 S380,330 450,360 S600,420 660,300 S760,160 820,120'
 
 function random(seed: number) {
   let state = seed % 2147483647 || 1
@@ -45,6 +51,7 @@ export function ContourMap({
     { x: 560, y: 210, scale: 0.8 },
     { x: 470, y: 470, scale: 0.7 },
   ],
+  river = DEFAULT_RIVER,
 }: ContourMapProps) {
   const rand = random(seed)
   const paths: Array<{ d: string; opacity: number }> = []
@@ -75,6 +82,16 @@ export function ContourMap({
             strokeWidth={1.2}
           />
         ))}
+        {river ? (
+          <path
+            d={river}
+            fill="none"
+            stroke="#1E3B2D"
+            strokeOpacity={0.45}
+            strokeWidth={2.5}
+            strokeLinecap="round"
+          />
+        ) : null}
       </svg>
       {pins.map((pin) => (
         <span key={pin.label} aria-hidden="true">

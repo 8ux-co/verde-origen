@@ -71,10 +71,11 @@ export const PHOTOS = {
     alt: 'Cañón del río Juanambú en Nariño, con cafetales en ladera muy empinada y una tarde nublada.',
     focal: '50% 50%',
     slots: {
-      'cafe-card': '72% 62%',
-      'cafe-main': '72% 62%',
-      'cafe-gallery': '72% 62%',
-      'related-box': '72% 62%',
+      // Cherries in the foreground, not the canyon (fidelity review).
+      'cafe-card': '80% 75%',
+      'cafe-main': '80% 75%',
+      'cafe-gallery': '80% 75%',
+      'related-box': '80% 75%',
       'region-card': '35% 50%',
       'origen-cover': '50% 55%',
     },

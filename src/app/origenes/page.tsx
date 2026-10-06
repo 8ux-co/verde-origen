@@ -149,7 +149,7 @@ export default async function OrigenesPage() {
             ratio="4/3"
             sizes="(min-width: 1024px) 640px, 100vw"
             className="bg-[#DCE1D6]! text-hoja"
-            emptyLabel="Mapa"
+            emptyLabel="Mapa · 4:3"
             empty={
               <ContourMap
                 pins={regions.map((r) => ({

@@ -32,7 +32,7 @@
   --fl-page: clamp(88px, calc(88px + 62 * ((100vw - 390px) / 1050)), 150px);
   --fl-page-long: clamp(56px, calc(56px + 72 * ((100vw - 390px) / 1050)), 128px);
   --fl-finca: clamp(60px, calc(60px + 100 * ((100vw - 390px) / 1050)), 160px);
-  --fl-cafe: clamp(64px, calc(64px + 40 * ((100vw - 390px) / 1050)), 104px);
+  --fl-cafe: clamp(72px, calc(72px + 32 * ((100vw - 390px) / 1050)), 104px);
   --fl-h2: clamp(40px, calc(40px + 24 * ((100vw - 390px) / 1050)), 64px);
   --fl-h2-xl: clamp(44px, calc(44px + 28 * ((100vw - 390px) / 1050)), 72px);
   --fl-h2-md: clamp(38px, calc(38px + 18 * ((100vw - 390px) / 1050)), 56px);
@@ -311,9 +311,13 @@
     color: var(--color-hoja);
   }
 
+  /* The system's disabled state: solid, not faded. */
   .btn[disabled] {
-    opacity: 0.4;
-    pointer-events: none;
+    background: var(--color-linea);
+    border-color: var(--color-linea);
+    color: var(--color-tinta-2);
+    opacity: 1;
+    cursor: not-allowed;
   }
 
   /* ── Photos ────────────────────────────────────────────────────────── */
@@ -617,6 +621,14 @@
 
   /* ── Rich text ─────────────────────────────────────────────────────── */
 
+  /* Preflight drops underlines; links inside running text keep theirs. */
+  .prose a,
+  .prose--article a,
+  .prose--answer a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
   .prose > * + * {
     margin-top: 18px;
   }
@@ -650,6 +662,16 @@
       margin-bottom: 26px;
       font-size: 21px;
     }
+  }
+
+  .prose--article ul,
+  .prose--answer ul {
+    list-style: disc;
+  }
+
+  .prose--article ol,
+  .prose--answer ol {
+    list-style: decimal;
   }
 
   .prose--article ul,

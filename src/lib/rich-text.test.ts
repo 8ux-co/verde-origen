@@ -55,8 +55,8 @@ describe('photos', () => {
   it('crops per slot, desktop and mobile, with a centred fallback', () => {
     expect(focalFor('hero-manos-cereza', 'hero')).toEqual({ desktop: '52% 50%', mobile: '48% 55%' })
     expect(focalFor('origen-narino', 'cafe-card')).toEqual({
-      desktop: '72% 62%',
-      mobile: '72% 62%',
+      desktop: '80% 75%',
+      mobile: '80% 75%',
     })
     expect(focalFor('origen-narino', 'region-card').desktop).toBe('35% 50%')
     expect(focalFor('unknown-file', 'hero')).toEqual({ desktop: '50% 50%', mobile: '50% 50%' })

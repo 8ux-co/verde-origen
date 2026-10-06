@@ -35,6 +35,13 @@ describe('money', () => {
     expect(formatCOP(168000)).toBe(`$${NBSP}168.000`)
   })
 
+  it('reads amountMinor first, then amount, and never prints NaN', () => {
+    expect(formatMoney({ amountMinor: 4_800_000, currency: 'COP' })).toBe(`$${NBSP}48.000`)
+    expect(pesos({ amountMinor: 4_800_000, amount: 1, currency: 'COP' })).toBe(48_000)
+    expect(formatMoney({ currency: 'COP' })).toBe('')
+    expect(pesos({ currency: 'COP' })).toBeNull()
+  })
+
   it('reads Zap CURRENCY values in minor units', () => {
     expect(formatMoney({ amount: 4_800_000, currency: 'COP' })).toBe(`$${NBSP}48.000`)
     expect(pesos({ amount: 8_900_000, currency: 'COP' })).toBe(89_000)
