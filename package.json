@@ -21,13 +21,13 @@
     "cms:types": "node --env-file-if-exists=.env.local node_modules/@8ux-co/eelzap-cli/dist/cli.js codegen && prettier --write src/generated/cms"
   },
   "dependencies": {
-    "@8ux-co/eelzap": "file:vendor/8ux-co-eelzap-0.10.0.tgz",
+    "@8ux-co/eelzap": "^0.10.0",
     "next": "16.3.8",
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
   "devDependencies": {
-    "@8ux-co/eelzap-cli": "file:vendor/8ux-co-eelzap-cli-0.10.0.tgz",
+    "@8ux-co/eelzap-cli": "^0.10.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22",
     "@types/react": "^19",
@@ -37,10 +37,5 @@
     "tsx": "^4.20.6",
     "typescript": "5.9.3",
     "vitest": "^3.2.4"
-  },
-  "pnpm": {
-    "overrides": {
-      "@8ux-co/eelzap": "file:vendor/8ux-co-eelzap-0.10.0.tgz"
-    }
   }
 }

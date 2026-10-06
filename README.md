@@ -27,11 +27,10 @@ Every page renders the header and footer from the document `configuracion`.
 
 ## The Zap client
 
-The site uses `@8ux-co/eelzap` 0.10.0 and, as a dev dependency,
-`@8ux-co/eelzap-cli`. Until they are on npm they are vendored as tarballs in
-`vendor/` (packed from the Zap repository) and installed as `file:`
-dependencies. **When 0.10.0 is published, switch both to `^0.10.0` from npm,
-remove the `pnpm.overrides` entry and delete `vendor/`.**
+The site uses [`@8ux-co/eelzap`](https://www.npmjs.com/package/@8ux-co/eelzap)
+`^0.10.0` and, as a dev dependency,
+[`@8ux-co/eelzap-cli`](https://www.npmjs.com/package/@8ux-co/eelzap-cli)
+`^0.10.0` (codegen only; it never ships with the site).
 
 What the site uses, and where:
 
@@ -141,18 +140,56 @@ origin only from a local page, so the setting is harmless in production.
 `pnpm dev:https` serves https://localhost:5070 with a self-signed certificate
 in `certificates/` (gitignored) when you need https locally.
 
+## Environment variables
+
+Names only. Values live in the local env file for development (gitignored)
+and in the host's settings for production; `.env.example` lists the names
+with a comment each.
+
+| Name                        | Used by             | Required                                             |
+| --------------------------- | ------------------- | ---------------------------------------------------- |
+| `EELZAP_API_KEY`            | site, seed, codegen | yes: a secret key of the Zap site                    |
+| `EELZAP_BASE_URL`           | site, seed, codegen | yes, unless Zap's API is the SDK default             |
+| `EELZAP_PATH_PREFIX`        | site, seed          | no                                                   |
+| `EELZAP_ORIGIN`             | site                | no: only when Zap's editor is not the production one |
+| `EELZAP_SITE_KEY`           | site                | yes                                                  |
+| `EELZAP_SITE_ID`            | site                | yes: turns on Shift Z suggestions                    |
+| `EELZAP_WEBHOOK_SECRET`     | site                | yes: the webhook endpoint's signing secret           |
+| `NEXT_PUBLIC_SITE_URL`      | site, seed          | yes: the site's public origin                        |
+| `EELZAP_REVALIDATE_SECONDS` | site                | no (default 3600)                                    |
+| `EELZAP_MEDIA_HOSTS`        | site (build)        | no: only for a custom media domain                   |
+| `EELZAP_DEV_AUTH_ORIGIN`    | site                | development only                                     |
+| `SEED_PHOTOS_DIR`           | seed                | no (default `./seed-photos`)                         |
+| `SEED_SITE_URL`             | seed                | no (default `NEXT_PUBLIC_SITE_URL`)                  |
+| `SEED_PREVIEW_ORIGINS`      | seed                | no                                                   |
+
 ## Deploying (Vercel)
 
-1. Publish `@8ux-co/eelzap` and `@8ux-co/eelzap-cli` 0.10.0, switch the
-   dependencies to npm and remove `vendor/`.
-2. Create the project from this repository (framework: Next.js; install
-   `pnpm install`; build `pnpm build`).
-3. Set the environment variables of `.env.example` (production values; no
-   `EELZAP_DEV_AUTH_ORIGIN`, and `EELZAP_ORIGIN` only if Zap is not
-   `https://zap.eel.software`).
-4. Seed production Zap (`pnpm seed` with the production key, base URL and
-   `SEED_SITE_URL=https://verdeorigen.co`), then create the webhook as above.
-5. Point `verdeorigen.co` at the deployment.
+1. Create the project from this repository: framework Next.js, install
+   command `pnpm install`, build command `pnpm build`, Node 22.
+2. Set the production environment variables from the table above. Leave out
+   `EELZAP_DEV_AUTH_ORIGIN`, and `EELZAP_ORIGIN` unless Zap's editor is not the
+   production one.
+3. Seed production Zap (below), then create the webhook endpoint in Nest
+   pointing at `/api/revalidate` on the production domain, and set its secret
+   as `EELZAP_WEBHOOK_SECRET`.
+4. Deploy, then point the domain at the deployment. `next build` reads Zap
+   (about a dozen requests) and fails on a dangling relation.
+
+### Seeding production
+
+Run the seed from a machine that has the 20 photos, with the production
+values exported in the shell rather than written to the local env file (shell
+variables win over it): `EELZAP_API_KEY`, `EELZAP_BASE_URL`, `SEED_SITE_URL`
+and `SEED_PHOTOS_DIR`. Then:
+
+```bash
+pnpm seed --dry-run   # validates content and relations, writes nothing
+pnpm seed             # model, photos, content, base URL, «Ruta en tu sitio»
+pnpm seed             # again: should report nothing to change
+```
+
+The seed never deletes, and leaves alone anything created in Zap by hand.
 
 ## Known gaps
 
