@@ -9,3 +9,4 @@ seed-photos
 .DS_Store
 coverage/
 certificates/
+.vercel
