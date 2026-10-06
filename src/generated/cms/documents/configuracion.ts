@@ -7,77 +7,77 @@ import type { DocumentDetail, DocumentMeta, MediaValue, Seo } from '@8ux-co/eelz
  * Document key: `configuracion`
  */
 export interface ConfiguracionContent {
-  /** YouTube | URL */
-  youtube_url: string | null
-
-  /** Términos y condiciones | URL */
-  terminos_url: string | null
-
   /** Aviso | TEXT */
   aviso: string | null
 
-  /** Envíos y devoluciones | URL */
-  envios_url: string | null
+  /** Logo | IMAGE | required */
+  logo: MediaValue
 
-  /** Logo | IMAGE */
-  logo: MediaValue | null
+  /** Menú 1: texto | TEXT | required */
+  nav_1_texto: string
 
-  /** Menú 2: texto | TEXT */
-  nav_2_texto: string | null
+  /** Menú 2: texto | TEXT | required */
+  nav_2_texto: string
 
-  /** Menú 3: texto | TEXT */
-  nav_3_texto: string | null
+  /** Menú 3: texto | TEXT | required */
+  nav_3_texto: string
 
-  /** Menú 1: texto | TEXT */
-  nav_1_texto: string | null
+  /** Menú 4: texto | TEXT | required */
+  nav_4_texto: string
 
-  /** Menú 4: enlace | URL */
-  nav_4_url: string | null
+  /** Menú 5: texto | TEXT | required */
+  nav_5_texto: string
+
+  /** Menú 1: enlace | URL | required */
+  nav_1_url: string
+
+  /** Menú 2: enlace | URL | required */
+  nav_2_url: string
+
+  /** Menú 3: enlace | URL | required */
+  nav_3_url: string
+
+  /** Menú 4: enlace | URL | required */
+  nav_4_url: string
+
+  /** Menú 5: enlace | URL | required */
+  nav_5_url: string
 
   /** Lema | LONG_TEXT */
   lema: string | null
 
-  /** Horario | LONG_TEXT */
-  horario: string | null
-
-  /** WhatsApp | URL */
-  whatsapp_url: string | null
+  /** Instagram | URL */
+  instagram_url: string | null
 
   /** TikTok | URL */
   tiktok_url: string | null
 
-  /** Razón social | TEXT */
-  razon_social: string | null
+  /** YouTube | URL */
+  youtube_url: string | null
 
-  /** Tratamiento de datos personales | URL */
-  datos_url: string | null
+  /** Dirección | LONG_TEXT | required */
+  direccion: string
 
-  /** Menú 2: enlace | URL */
-  nav_2_url: string | null
+  /** Horario | LONG_TEXT | required */
+  horario: string
 
-  /** Menú 4: texto | TEXT */
-  nav_4_texto: string | null
+  /** Correo | EMAIL | required */
+  email: string
 
-  /** Menú 5: texto | TEXT */
-  nav_5_texto: string | null
+  /** WhatsApp | URL */
+  whatsapp_url: string | null
 
-  /** Menú 1: enlace | URL */
-  nav_1_url: string | null
+  /** Razón social | TEXT | required */
+  razon_social: string
 
-  /** Menú 3: enlace | URL */
-  nav_3_url: string | null
+  /** Términos y condiciones | URL | required */
+  terminos_url: string
 
-  /** Menú 5: enlace | URL */
-  nav_5_url: string | null
+  /** Tratamiento de datos personales | URL | required */
+  datos_url: string
 
-  /** Dirección | LONG_TEXT */
-  direccion: string | null
-
-  /** Correo | EMAIL */
-  email: string | null
-
-  /** Instagram | URL */
-  instagram_url: string | null
+  /** Envíos y devoluciones | URL | required */
+  envios_url: string
 }
 
 export type ConfiguracionDocument = DocumentDetail<ConfiguracionContent> & {

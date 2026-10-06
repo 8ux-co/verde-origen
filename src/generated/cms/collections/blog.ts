@@ -17,8 +17,14 @@ export interface BlogContent {
   /** Título | TEXT | required */
   titulo: string
 
-  /** Café relacionado (slug) | TEXT */
-  cafe_relacionado: string | null
+  /** Extracto | LONG_TEXT | required */
+  extracto: string
+
+  /** Portada | IMAGE | required */
+  portada: MediaValue
+
+  /** Pie de la portada | TEXT */
+  portada_pie: string | null
 
   /** Cuerpo | RICH_TEXT | required */
   cuerpo: string
@@ -32,20 +38,14 @@ export interface BlogContent {
   /** Fecha | DATE | required */
   fecha: string
 
-  /** Extracto | LONG_TEXT | required */
-  extracto: string
-
-  /** Pie de la portada | TEXT */
-  portada_pie: string | null
+  /** Minutos de lectura | INTEGER */
+  lectura_min: number | null
 
   /** Destacado | BOOLEAN */
   destacado: boolean | null
 
-  /** Portada | IMAGE | required */
-  portada: MediaValue
-
-  /** Minutos de lectura | INTEGER */
-  lectura_min: number | null
+  /** Café relacionado (slug) | TEXT */
+  cafe_relacionado: string | null
 }
 
 export type BlogItem = ItemDetail<BlogContent> & { meta: ItemMeta } & { seo: Seo | null }

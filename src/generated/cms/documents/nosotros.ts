@@ -13,8 +13,38 @@ import type {
  * Document key: `nosotros`
  */
 export interface NosotrosContent {
+  /** Título | TEXT | required */
+  titulo: string
+
+  /** Introducción | LONG_TEXT */
+  intro: string | null
+
+  /** Portada | IMAGE | required */
+  portada: MediaValue
+
+  /** Historia | RICH_TEXT */
+  historia: string | null
+
   /** Principio 1: título | TEXT */
   principio_1_titulo: string | null
+
+  /** Principio 1: texto | LONG_TEXT */
+  principio_1_texto: string | null
+
+  /** Principio 2: título | TEXT */
+  principio_2_titulo: string | null
+
+  /** Principio 2: texto | LONG_TEXT */
+  principio_2_texto: string | null
+
+  /** Principio 3: título | TEXT */
+  principio_3_titulo: string | null
+
+  /** Principio 3: texto | LONG_TEXT */
+  principio_3_texto: string | null
+
+  /** Galería | GALLERY */
+  galeria: GalleryItemValue[]
 
   /** Visita: título | TEXT */
   visita_titulo: string | null
@@ -24,36 +54,6 @@ export interface NosotrosContent {
 
   /** Visita: enlace «Cómo llegar» | URL */
   visita_cta_url: string | null
-
-  /** Título | TEXT */
-  titulo: string | null
-
-  /** Introducción | LONG_TEXT */
-  intro: string | null
-
-  /** Historia | RICH_TEXT */
-  historia: string | null
-
-  /** Principio 1: texto | LONG_TEXT */
-  principio_1_texto: string | null
-
-  /** Principio 3: título | TEXT */
-  principio_3_titulo: string | null
-
-  /** Principio 2: título | TEXT */
-  principio_2_titulo: string | null
-
-  /** Principio 2: texto | LONG_TEXT */
-  principio_2_texto: string | null
-
-  /** Principio 3: texto | LONG_TEXT */
-  principio_3_texto: string | null
-
-  /** Galería | GALLERY */
-  galeria: GalleryItemValue[] | null
-
-  /** Portada | IMAGE */
-  portada: MediaValue | null
 }
 
 export type NosotrosDocument = DocumentDetail<NosotrosContent> & { meta: DocumentMeta } & {

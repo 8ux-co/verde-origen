@@ -4,12 +4,16 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useId, useState } from 'react'
 
+import type { ZapAttrs } from '@8ux-co/eelzap/fields'
+
 import { COPY } from '@/lib/copy'
 
 export interface NavItem {
   /** The label as delivered: in preview it carries its stega marker. */
   label: string
   href: string
+  /** The URL field's tag: the preview updates the link's `href`. */
+  attrs?: ZapAttrs
 }
 
 function isActive(pathname: string, href: string) {
@@ -29,6 +33,7 @@ export function NavLinks({ items }: { items: NavItem[] }) {
             <li key={item.href}>
               <Link
                 href={item.href}
+                {...item.attrs}
                 aria-current={active ? 'page' : undefined}
                 className={`inline-block py-2 font-display text-[17px] leading-none font-bold tracking-[0.1em] text-tinta uppercase decoration-cereza decoration-2 underline-offset-[10px] hover:underline ${active ? 'underline' : 'no-underline'}`}
               >
@@ -108,10 +113,11 @@ export function MobileMenu({
       >
         <nav aria-label="Principal">
           <ul className="m-0 list-none p-0">
-            {[...items, faq].map((item) => (
+            {([...items, faq] as NavItem[]).map((item) => (
               <li key={item.href} className="border-b border-linea">
                 <Link
                   href={item.href}
+                  {...item.attrs}
                   aria-current={isActive(pathname, item.href) ? 'page' : undefined}
                   className="block py-4 font-display text-[34px] leading-none font-extrabold text-tinta uppercase no-underline aria-[current=page]:text-cereza"
                 >

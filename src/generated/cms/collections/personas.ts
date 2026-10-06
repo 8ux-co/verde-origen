@@ -7,12 +7,6 @@ import type { ItemDetail, ItemListResponse, ItemMeta, MediaValue, Seo } from '@8
  * Collection key: `personas`
  */
 export interface PersonasContent {
-  /** Biografía | LONG_TEXT */
-  bio: string | null
-
-  /** En el equipo | BOOLEAN */
-  en_equipo: boolean | null
-
   /** Nombre | TEXT | required */
   nombre: string
 
@@ -21,6 +15,12 @@ export interface PersonasContent {
 
   /** Foto | IMAGE */
   foto: MediaValue | null
+
+  /** Biografía | LONG_TEXT */
+  bio: string | null
+
+  /** En el equipo | BOOLEAN */
+  en_equipo: boolean | null
 
   /** Orden | INTEGER */
   orden: number | null

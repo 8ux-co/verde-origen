@@ -222,7 +222,9 @@ export default async function OrigenPage({ params }: Props) {
               ))}
               {c.mapa_url ? (
                 <div>
-                  <ArrowLink href={f.value('mapa_url') ?? '#'}>Abrir en Google Maps</ArrowLink>
+                  <ArrowLink href={f.value('mapa_url') ?? '#'} {...f.attrs('mapa_url')}>
+                    Abrir en Google Maps
+                  </ArrowLink>
                 </div>
               ) : null}
             </div>

@@ -30,6 +30,8 @@
   --section-y: 56px;
   --fl-hero: clamp(68px, calc(68px + 50 * ((100vw - 390px) / 1050)), 118px);
   --fl-page: clamp(88px, calc(88px + 62 * ((100vw - 390px) / 1050)), 150px);
+  /* A long single word («Escríbenos») must fit 350px at 390. */
+  --fl-page-word: clamp(72px, calc(72px + 78 * ((100vw - 390px) / 1050)), 150px);
   --fl-page-long: clamp(56px, calc(56px + 72 * ((100vw - 390px) / 1050)), 128px);
   --fl-finca: clamp(60px, calc(60px + 100 * ((100vw - 390px) / 1050)), 160px);
   --fl-cafe: clamp(72px, calc(72px + 32 * ((100vw - 390px) / 1050)), 104px);
@@ -181,6 +183,7 @@
     letter-spacing: -0.005em;
     text-transform: uppercase;
     text-wrap: balance;
+    overflow-wrap: break-word;
   }
 
   .h2 {

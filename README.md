@@ -39,7 +39,7 @@ What the site uses, and where:
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | Typed reads (`createClient`, items, documents)                                     | `src/lib/zap.ts`, `src/lib/content.ts`                                                     |
 | Generated types (`eelzap codegen`, committed)                                      | `src/generated/cms`, `eelzap.config.json`, `pnpm cms:types`                                |
-| `fields()` on every rendered field (stega for text, `data-zap` for the rest)       | every page and component; numbered slots in `src/lib/fields-extra.ts`                      |
+| `fields()` on every rendered field (stega for text, `data-zap` for the rest)       | every page and component; numbered slots with `f.list('nav', 5)`                           |
 | Draft-mode route and its exit (`./next`)                                           | `src/app/api/zap-preview/route.ts`, `src/app/api/zap-preview/exit/route.ts`                |
 | Drafts read with a validated preview token (`getValidPreviewToken`)                | `src/lib/zap.ts`                                                                           |
 | The boot (`<ZapPreview />` from `./next`), Shift Z suggestions                     | `src/app/layout.tsx`                                                                       |
@@ -52,16 +52,17 @@ Published reads go through Next's data cache, tagged `zap:collection:<key>`
 and `zap:document:<key>`. The webhook expires the tags of whatever changed
 (media changes expire everything). Collections are read whole, one request
 each, so a full build makes about a dozen requests: Zap allows a site key 100
-a minute, and `src/lib/zap-fetch.ts` waits out a 429 if it ever happens.
+a minute, and the client retries a 429 on its own.
 
 ### Tagging rule
 
-Zap's preview writes a tagged element's **whole text** as the field's value.
-So a `data-zap` tag goes on an element that shows exactly that value: the
-figure, not the figure and its unit (`<span data-zap>1.850</span> msnm`); an
-image; a price. Text fields need no tag (stega). Links whose text is not the
-URL are left untagged, because the preview would replace their label with the
-URL (see "Known gaps").
+Text fields need no tag (stega). For the rest, Zap's preview writes a tagged
+element's **whole text** as the field's value, so a `data-zap` tag goes on an
+element that shows exactly that value: the figure, not the figure and its unit
+(`<span data-zap>1.850</span> msnm`), or a price. Images take the tag on the
+`<img>`. URL and email fields are the exception: on a link, the preview
+updates `href` (or `mailto:`) and keeps the label, so links carry their URL
+field's tag.
 
 ### Content model
 
@@ -96,9 +97,10 @@ Node 22, pnpm 9.
 
 `scripts/seed.ts` creates or converges the whole site in Zap through the
 **public API**, with the site's secret key: collections, documents, sections,
-fields, the 20 photos (uploaded, alt text set, published), and every entry and
-document value. It is idempotent: re-running publishes only what changed and
-never deletes.
+fields, the 20 photos (uploaded, alt text set, published), every entry and
+document value, the site's base URL and «Otros dominios», and each collection's
+and document's «Ruta en tu sitio». It is idempotent: re-running publishes only
+what changed and never deletes. Requests are paced under Zap's 100 a minute.
 
 ```bash
 pnpm seed --dry-run        # validate content and relations, write nothing
@@ -108,20 +110,20 @@ pnpm seed --force          # re-save and re-publish every entry
 ```
 
 The photos are not in the repository. Put the 20 PNGs in `./seed-photos`
-(or set `SEED_PHOTOS_DIR`); a photo already in Zap is not uploaded again.
-Zap refuses images over 2 MB, so the seed uploads each PNG at its native size
-as a JPEG (quality 88).
+(or set `SEED_PHOTOS_DIR`); a photo already in Zap is not uploaded again. The
+originals go up as they are (Zap allows 10 MB per image).
 
-Three settings are not on the public API and are set in Zap (site settings),
-once per environment:
+The base URL is `SEED_SITE_URL` (default `NEXT_PUBLIC_SITE_URL`), the extra
+origins `SEED_PREVIEW_ORIGINS` (comma-separated). The paths are in
+`scripts/seed/model.ts`: `cafes` `/cafes/{slug}`, `origenes`
+`/origenes/{slug}`, `blog` `/blog/{slug}`, `personas` `/nosotros`, `preguntas`
+`/preguntas-frecuentes`; `inicio` and `configuracion` `/`, `nosotros`
+`/nosotros`, `contacto` `/contacto`, `pagina-cafes` `/cafes`,
+`pagina-origenes` `/origenes`, `pagina-blog` `/blog`, `pagina-preguntas`
+`/preguntas-frecuentes`.
 
-- the site's base URL (https), and «Otros dominios» for any extra origin;
-- «Ruta en tu sitio» of each collection and document (the seed prints them):
-  `cafes` `/cafes/{slug}`, `origenes` `/origenes/{slug}`, `blog` `/blog/{slug}`,
-  `personas` `/nosotros`, `preguntas` `/preguntas-frecuentes`; `inicio` and
-  `configuracion` `/`, `nosotros` `/nosotros`, `contacto` `/contacto`,
-  `pagina-cafes` `/cafes`, `pagina-origenes` `/origenes`, `pagina-blog` `/blog`,
-  `pagina-preguntas` `/preguntas-frecuentes`;
+One setting stays by hand, once per environment:
+
 - the webhook endpoint (Nest → workspace settings → Webhooks): URL
   `https://<site>/api/revalidate`, events `zap.item.*`, `zap.document.*`,
   `zap.media.*`, narrowed to this site; its `whsec_` secret goes in
@@ -129,22 +131,15 @@ once per environment:
 
 ## Local preview against a local Zap
 
-Zap frames a site only at an **https** base URL, so locally the site runs on
-https with a self-signed certificate:
+Set `EELZAP_ORIGIN` to the local Zap (`http://localhost:5047`) and
+`NEXT_PUBLIC_SITE_URL` to `http://localhost:5070`, run `pnpm seed --only=schema`
+so the Zap site's base URL points here, and `pnpm dev`. The layout passes the
+local origin to `<ZapPreview zapOrigin>`: framed by that Zap, the client loads
+the overlay from it (same SRI hash) and trusts it; the SDK honours a local
+origin only from a local page, so the setting is harmless in production.
 
-```bash
-mkdir -p certificates && openssl req -x509 -newkey rsa:2048 -nodes \
-  -keyout certificates/localhost-key.pem -out certificates/localhost.pem \
-  -days 365 -subj "/CN=localhost" -addext "subjectAltName=DNS:localhost"
-pnpm dev:https             # https://localhost:5070
-```
-
-Open https://localhost:5070 once and accept the certificate, set the Zap
-site's base URL to `https://localhost:5070`, and set `EELZAP_ORIGIN` to the
-local Zap. In development the layout adds `DevPreviewBridge`
-(`src/components/dev-preview-bridge.tsx`), which loads the preview client from
-the local Zap instead of the production CDN (same file, same SRI hash) and
-boots it for an https page framed by a local Zap. Production never renders it.
+`pnpm dev:https` serves https://localhost:5070 with a self-signed certificate
+in `certificates/` (gitignored) when you need https locally.
 
 ## Deploying (Vercel)
 
@@ -155,17 +150,14 @@ boots it for an https page framed by a local Zap. Production never renders it.
 3. Set the environment variables of `.env.example` (production values; no
    `EELZAP_DEV_AUTH_ORIGIN`, and `EELZAP_ORIGIN` only if Zap is not
    `https://zap.eel.software`).
-4. Seed production Zap (`pnpm seed` with the production key and base URL),
-   then set the base URL, «Ruta en tu sitio» and the webhook as above.
+4. Seed production Zap (`pnpm seed` with the production key, base URL and
+   `SEED_SITE_URL=https://verdeorigen.co`), then create the webhook as above.
 5. Point `verdeorigen.co` at the deployment.
 
 ## Known gaps
 
-- The Zap toolbar, the WhatsApp button and the bottom-centre clear zone:
-  before sign-in, Shift Z shows Zap's launcher at the bottom right, over the
-  WhatsApp button.
-- URL fields cannot be tagged safely (the preview writes the URL as the link's
-  text), so editors find them in the form, not by clicking the page.
+- «Ruta en tu sitio» is not on the API's read answers, so the seed sends it on
+  every run (a write that changes nothing).
 - Legal pages (`/terminos-y-condiciones`, `/tratamiento-de-datos`,
   `/envios-y-devoluciones`) are linked from `configuracion` but are not part
   of these boards; they answer 404 until they exist.

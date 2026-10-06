@@ -10,11 +10,11 @@ export interface PreguntasContent {
   /** Pregunta | TEXT | required */
   pregunta: string
 
-  /** Tema | ENUM | required */
-  tema: EnumValue & { value: 'pedidos_envios' | 'cafe_preparacion' | 'mayoristas_visitas' }
-
   /** Respuesta | RICH_TEXT | required */
   respuesta: string
+
+  /** Tema | ENUM | required */
+  tema: EnumValue & { value: 'pedidos_envios' | 'cafe_preparacion' | 'mayoristas_visitas' }
 
   /** Orden | INTEGER */
   orden: number | null

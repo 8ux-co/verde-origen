@@ -109,6 +109,7 @@ export function SiteFooter({
               {f.value('whatsapp_url') ? (
                 <a
                   href={f.value('whatsapp_url') ?? '#'}
+                  {...f.attrs('whatsapp_url')}
                   className="text-niebla no-underline hover:underline"
                 >
                   {COPY.whatsapp}
@@ -125,6 +126,7 @@ export function SiteFooter({
                   <li key={key}>
                     <a
                       href={f.value(key) ?? '#'}
+                      {...f.attrs(key)}
                       className={item}
                       rel="me noopener"
                       target="_blank"
@@ -149,6 +151,7 @@ export function SiteFooter({
               <a
                 key={key}
                 href={f.value(key) ?? '#'}
+                {...f.attrs(key)}
                 className="font-story text-[15px] leading-[1.4] text-hoja-texto underline underline-offset-[3px]"
               >
                 {label}

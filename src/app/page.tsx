@@ -17,7 +17,6 @@ import {
   getPersonas,
   getPosts,
 } from '@/lib/content'
-import { slots } from '@/lib/fields-extra'
 import { altitudeRange, formatInt, numberWord, paragraphs } from '@/lib/format'
 
 export const revalidate = 3600
@@ -58,7 +57,7 @@ export default async function InicioPage() {
   const f = fields(inicio)
   const destacados = cafes.filter((cafe) => cafe.content.destacado)
   const first = destacados[0]
-  const datos = slots(f, 'dato', 4, 'valor').filter((slot) => !slot.empty)
+  const datos = f.list('dato', 4).filter((slot) => !slot.empty)
   const historia = paragraphs(f.text('historia_texto'))
 
   return (
@@ -77,12 +76,19 @@ export default async function InicioPage() {
               {f.text('hero_texto')}
             </p>
             <div className="mt-1 flex flex-col items-stretch gap-[14px] sm:flex-row sm:items-center sm:gap-7 lg:mt-2">
-              <Link href={f.value('hero_cta_url') || '/cafes'} className="btn btn--lg btn--buy">
+              <Link
+                href={f.value('hero_cta_url') || '/cafes'}
+                className="btn btn--lg btn--buy"
+                {...f.attrs('hero_cta_url')}
+              >
                 {f.text('hero_cta_texto')}
               </Link>
               {f.text('hero_enlace_texto') ? (
                 <div className="text-center sm:text-left">
-                  <ArrowLink href={f.value('hero_enlace_url') || '/origenes'}>
+                  <ArrowLink
+                    href={f.value('hero_enlace_url') || '/origenes'}
+                    {...f.attrs('hero_enlace_url')}
+                  >
                     {f.text('hero_enlace_texto')}
                   </ArrowLink>
                 </div>
@@ -115,9 +121,9 @@ export default async function InicioPage() {
 
         {datos.length > 0 ? (
           <div className="mt-[52px] grid grid-cols-2 gap-x-5 gap-y-6 lg:mt-[88px] lg:grid-cols-4 lg:gap-8">
-            {datos.map((dato, i) => (
+            {datos.map((dato) => (
               <div
-                key={i}
+                key={dato.key}
                 className="flex flex-col gap-[6px] border-t-[1.5px] border-tinta pt-[14px] lg:gap-[10px] lg:pt-[22px]"
               >
                 <span className="font-display text-(length:--fl-figure) leading-[0.9] font-black">
@@ -255,7 +261,10 @@ export default async function InicioPage() {
             ))}
             {f.text('historia_cta_texto') ? (
               <div className="lg:mt-[6px]">
-                <ArrowLink href={f.value('historia_cta_url') || '/nosotros'}>
+                <ArrowLink
+                  href={f.value('historia_cta_url') || '/nosotros'}
+                  {...f.attrs('historia_cta_url')}
+                >
                   {f.text('historia_cta_texto')}
                 </ArrowLink>
               </div>

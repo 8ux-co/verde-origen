@@ -7,32 +7,32 @@ import type { DocumentDetail, DocumentMeta, MediaValue, Seo } from '@8ux-co/eelz
  * Document key: `inicio`
  */
 export interface InicioContent {
-  /** Imagen | IMAGE */
-  hero_imagen: MediaValue | null
+  /** Antetítulo | TEXT */
+  hero_antetitulo: string | null
 
-  /** Enlace: destino | URL */
-  hero_enlace_url: string | null
+  /** Título | TEXT | required */
+  hero_titulo: string
+
+  /** Texto | LONG_TEXT | required */
+  hero_texto: string
+
+  /** Botón: texto | TEXT | required */
+  hero_cta_texto: string
+
+  /** Botón: enlace | URL | required */
+  hero_cta_url: string
 
   /** Enlace: texto | TEXT */
   hero_enlace_texto: string | null
 
-  /** Botón: texto | TEXT */
-  hero_cta_texto: string | null
+  /** Enlace: destino | URL */
+  hero_enlace_url: string | null
 
-  /** Título | TEXT */
-  hero_titulo: string | null
+  /** Imagen | IMAGE | required */
+  hero_imagen: MediaValue
 
   /** Cifra 1 | TEXT */
   dato_1_valor: string | null
-
-  /** Botón: enlace | URL */
-  hero_cta_url: string | null
-
-  /** Texto | LONG_TEXT */
-  hero_texto: string | null
-
-  /** Antetítulo | TEXT */
-  hero_antetitulo: string | null
 
   /** Cifra 2 | TEXT */
   dato_2_valor: string | null
@@ -49,29 +49,17 @@ export interface InicioContent {
   /** Cifra 2: texto | TEXT */
   dato_2_texto: string | null
 
-  /** Cifra 4: texto | TEXT */
-  dato_4_texto: string | null
-
-  /** Orígenes: texto | LONG_TEXT */
-  origenes_texto: string | null
-
-  /** Cafés destacados: título | TEXT */
-  destacados_titulo: string | null
-
-  /** Historia: título | TEXT */
-  historia_titulo: string | null
-
-  /** Historia: imagen | IMAGE */
-  historia_imagen: MediaValue | null
-
-  /** Historia: destino del enlace | URL */
-  historia_cta_url: string | null
-
   /** Cifra 3: texto | TEXT */
   dato_3_texto: string | null
 
+  /** Cifra 4: texto | TEXT */
+  dato_4_texto: string | null
+
   /** Cafés destacados: antetítulo | TEXT */
   destacados_antetitulo: string | null
+
+  /** Cafés destacados: título | TEXT */
+  destacados_titulo: string | null
 
   /** Cafés destacados: nota | LONG_TEXT */
   destacados_texto: string | null
@@ -79,23 +67,35 @@ export interface InicioContent {
   /** Orígenes: título | TEXT */
   origenes_titulo: string | null
 
+  /** Orígenes: texto | LONG_TEXT */
+  origenes_texto: string | null
+
   /** Historia: antetítulo | TEXT */
   historia_antetitulo: string | null
+
+  /** Historia: título | TEXT */
+  historia_titulo: string | null
 
   /** Historia: texto | LONG_TEXT */
   historia_texto: string | null
 
+  /** Historia: imagen | IMAGE */
+  historia_imagen: MediaValue | null
+
   /** Historia: texto del enlace | TEXT */
   historia_cta_texto: string | null
+
+  /** Historia: destino del enlace | URL */
+  historia_cta_url: string | null
 
   /** Diario: título | TEXT */
   diario_titulo: string | null
 
-  /** Boletín: texto | LONG_TEXT */
-  boletin_texto: string | null
-
   /** Boletín: título | TEXT */
   boletin_titulo: string | null
+
+  /** Boletín: texto | LONG_TEXT */
+  boletin_texto: string | null
 
   /** Boletín: nota | TEXT */
   boletin_nota: string | null

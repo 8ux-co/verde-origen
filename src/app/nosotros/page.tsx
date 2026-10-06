@@ -7,7 +7,6 @@ import { Photo } from '@/components/photo'
 import { RichText } from '@/components/rich-text'
 import { Breadcrumbs, Initials } from '@/components/ui'
 import { getDocument, getPersonas } from '@/lib/content'
-import { slots } from '@/lib/fields-extra'
 import { initials } from '@/lib/format'
 import { takeLeading } from '@/lib/rich-text'
 
@@ -29,7 +28,7 @@ export default async function NosotrosPage() {
   const f = fields(page)
   const c = page.content
   const { taken, rest } = takeLeading(c.historia, ['h3', 'h2'])
-  const principios = slots(f, 'principio', 3, 'titulo').filter((slot) => !slot.empty)
+  const principios = f.list('principio', 3).filter((slot) => !slot.empty)
   const gallery = (c.galeria ?? []).filter((item) => item.media?.url).slice(0, 4)
   const team = personas.filter((persona) => persona.content.en_equipo)
   const visitUrl = f.value('visita_cta_url')
@@ -81,7 +80,7 @@ export default async function NosotrosPage() {
           <div className="wrap grid gap-10 py-12 md:grid-cols-3 lg:gap-12 lg:py-24">
             {principios.map((principio, i) => (
               <div
-                key={i}
+                key={principio.key}
                 className="flex flex-col gap-[14px] border-t-[1.5px] border-[rgba(237,239,233,0.4)] pt-[22px] lg:gap-[18px] lg:pt-[26px]"
               >
                 <span
@@ -177,6 +176,7 @@ export default async function NosotrosPage() {
             <div>
               <a
                 href={visitUrl || '/contacto'}
+                {...f.attrs('visita_cta_url')}
                 className="btn btn--dark"
                 target={visitUrl ? '_blank' : undefined}
                 rel="noopener"

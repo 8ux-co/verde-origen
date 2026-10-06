@@ -16,53 +16,38 @@ import type {
  * Collection key: `cafes`
  */
 export interface CafesContent {
-  /** Sobre este lote | RICH_TEXT */
-  descripcion: string | null
-
-  /** Proceso | ENUM | required */
-  proceso: EnumValue & { value: 'lavado' | 'honey' | 'natural' | 'anaerobico' }
-
-  /** Altitud (msnm) | INTEGER | required */
-  altitud: number
-
   /** Nombre | TEXT | required */
   nombre: string
-
-  /** Resumen | LONG_TEXT | required */
-  resumen: string
-
-  /** Cómo lo preparamos | LONG_TEXT */
-  preparacion: string | null
-
-  /** Galería | GALLERY */
-  galeria: GalleryItemValue[] | null
-
-  /** Región | ENUM | required */
-  region: EnumValue & { value: 'huila' | 'narino' | 'cauca' | 'tolima' | 'varias' }
-
-  /** Productor o familia | TEXT | required */
-  productor: string
-
-  /** Precio 250 g | CURRENCY | required */
-  precio_250: CurrencyValue
-
-  /** Disponible | BOOLEAN */
-  disponible: boolean | null
-
-  /** Destacado en Inicio | BOOLEAN */
-  destacado: boolean | null
 
   /** Lote | TEXT | required */
   lote: string
 
+  /** Resumen | LONG_TEXT | required */
+  resumen: string
+
+  /** Sobre este lote | RICH_TEXT */
+  descripcion: string | null
+
+  /** Cómo lo preparamos | LONG_TEXT */
+  preparacion: string | null
+
   /** Foto | IMAGE | required */
   foto: MediaValue
+
+  /** Galería | GALLERY */
+  galeria: GalleryItemValue[]
+
+  /** Finca (slug) | TEXT | required */
+  origen: string
+
+  /** Región | ENUM | required */
+  region: EnumValue & { value: 'huila' | 'narino' | 'cauca' | 'tolima' | 'varias' }
 
   /** Municipio | TEXT | required */
   municipio: string
 
-  /** Finca (slug) | TEXT | required */
-  origen: string
+  /** Productor o familia | TEXT | required */
+  productor: string
 
   /** Variedad | ENUM | required */
   variedad: EnumValue & {
@@ -71,6 +56,9 @@ export interface CafesContent {
 
   /** Variedades (detalle) | TEXT */
   variedad_detalle: string | null
+
+  /** Proceso | ENUM | required */
+  proceso: EnumValue & { value: 'lavado' | 'honey' | 'natural' | 'anaerobico' }
 
   /** Proceso (detalle) | TEXT */
   proceso_detalle: string | null
@@ -81,6 +69,9 @@ export interface CafesContent {
 
   /** Notas de catación | TEXT | required */
   notas: string
+
+  /** Altitud (msnm) | INTEGER | required */
+  altitud: number
 
   /** Secado | TEXT */
   secado: string | null
@@ -94,11 +85,20 @@ export interface CafesContent {
   /** Tueste | ENUM */
   tueste: (EnumValue & { value: 'claro' | 'medio_claro' | 'medio' | 'medio_oscuro' }) | null
 
+  /** Precio 250 g | CURRENCY | required */
+  precio_250: CurrencyValue
+
   /** Precio 500 g | CURRENCY */
   precio_500: CurrencyValue | null
 
   /** Precio 1 kg | CURRENCY */
   precio_1kg: CurrencyValue | null
+
+  /** Disponible | BOOLEAN */
+  disponible: boolean | null
+
+  /** Destacado en Inicio | BOOLEAN */
+  destacado: boolean | null
 
   /** Orden | INTEGER */
   orden: number | null

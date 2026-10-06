@@ -15,44 +15,8 @@ import type {
  * Collection key: `origenes`
  */
 export interface OrigenesContent {
-  /** Foto de portada | IMAGE | required */
-  foto_portada: MediaValue
-
-  /** Foto del productor | IMAGE */
-  productor_foto: MediaValue | null
-
-  /** Galería | GALLERY */
-  galeria: GalleryItemValue[] | null
-
-  /** Cómo llegar | LONG_TEXT */
-  como_llegar: string | null
-
-  /** Altitud máxima (msnm) | INTEGER | required */
-  altitud_max: number
-
-  /** Hectáreas | NUMBER */
-  hectareas: number | null
-
-  /** Cosecha | TEXT */
-  cosecha: string | null
-
-  /** Resumen | LONG_TEXT */
-  resumen: string | null
-
-  /** Cita del productor | LONG_TEXT */
-  cita: string | null
-
-  /** Foto de la región | IMAGE */
-  foto_region: MediaValue | null
-
-  /** Mapa | IMAGE */
-  mapa_imagen: MediaValue | null
-
   /** Nombre | TEXT | required */
   nombre: string
-
-  /** Enlace del mapa | URL */
-  mapa_url: string | null
 
   /** Región | ENUM | required */
   region: EnumValue & { value: 'huila' | 'narino' | 'cauca' | 'tolima' }
@@ -69,14 +33,50 @@ export interface OrigenesContent {
   /** Altitud mínima (msnm) | INTEGER | required */
   altitud_min: number
 
+  /** Altitud máxima (msnm) | INTEGER | required */
+  altitud_max: number
+
   /** Variedades | TEXT */
   variedades: string | null
+
+  /** Hectáreas | NUMBER */
+  hectareas: number | null
+
+  /** Cosecha | TEXT */
+  cosecha: string | null
 
   /** Compramos desde (año) | INTEGER */
   desde: number | null
 
+  /** Resumen | LONG_TEXT */
+  resumen: string | null
+
   /** Historia | RICH_TEXT */
   historia: string | null
+
+  /** Cita del productor | LONG_TEXT */
+  cita: string | null
+
+  /** Foto de portada | IMAGE | required */
+  foto_portada: MediaValue
+
+  /** Foto de la región | IMAGE */
+  foto_region: MediaValue | null
+
+  /** Foto del productor | IMAGE */
+  productor_foto: MediaValue | null
+
+  /** Galería | GALLERY */
+  galeria: GalleryItemValue[]
+
+  /** Mapa | IMAGE */
+  mapa_imagen: MediaValue | null
+
+  /** Enlace del mapa | URL */
+  mapa_url: string | null
+
+  /** Cómo llegar | LONG_TEXT */
+  como_llegar: string | null
 }
 
 export type OrigenesItem = ItemDetail<OrigenesContent> & { meta: ItemMeta } & { seo: Seo | null }

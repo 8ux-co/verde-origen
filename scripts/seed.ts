@@ -8,6 +8,10 @@
  *   pnpm seed --force         # re-save and re-publish entries even when unchanged
  *   pnpm seed --only=schema   # one stage: media, schema, content
  *
+ * It also sets the site's base URL and «Otros dominios» (SEED_SITE_URL, default
+ * NEXT_PUBLIC_SITE_URL; SEED_PREVIEW_ORIGINS) and each collection's and
+ * document's «Ruta en tu sitio».
+ *
  * Env: EELZAP_API_KEY (a SECRET site key), EELZAP_BASE_URL (and optionally
  * EELZAP_PATH_PREFIX), SEED_PHOTOS_DIR (default ./seed-photos; the 20 PNGs).
  *
@@ -17,7 +21,6 @@
  * Fields, entries and media added in Zap by hand are left alone.
  */
 import { readFile } from 'node:fs/promises'
-import sharp from 'sharp'
 import { existsSync } from 'node:fs'
 import { join, resolve } from 'node:path'
 
@@ -28,10 +31,10 @@ import {
   type FieldInfo,
   type MediaDetail,
   type SectionInfo,
+  type SiteInfo,
 } from '@8ux-co/eelzap'
 
 import { PHOTOS } from '../src/lib/photos'
-import { retryingFetch } from '../src/lib/zap-fetch'
 import { CAFES, ORIGENES } from './seed/content/catalog'
 import { DOCUMENT_VALUES } from './seed/content/documents'
 import { BLOG, PERSONAS, PREGUNTAS } from './seed/content/editorial'
@@ -80,18 +83,10 @@ interface SeedMedia {
   alt: string
 }
 
-/**
- * The photos arrive as full-resolution PNGs of 2 to 3 MB, over Zap's default
- * 2 MB image limit. They are uploaded at their native size as JPEG (quality
- * 88); the site's image optimiser serves AVIF and WebP from there.
- */
-async function prepare(file: string, contentType: string) {
-  const bytes = await readFile(file)
-  if (contentType !== 'image/jpeg') return { bytes, width: undefined, height: undefined }
-  const { data, info } = await sharp(bytes).jpeg({ quality: 88, mozjpeg: true }).toBuffer({
-    resolveWithObject: true,
-  })
-  return { bytes: data, width: info.width, height: info.height }
+/** Width and height from a PNG's header; the originals go up as they are (Zap allows 10 MB). */
+function pngSize(bytes: Buffer): { width: number; height: number } | null {
+  if (bytes.length < 24 || bytes.toString('ascii', 1, 4) !== 'PNG') return null
+  return { width: bytes.readUInt32BE(16), height: bytes.readUInt32BE(20) }
 }
 
 async function findMedia(cms: EelZapClient, filename: string): Promise<MediaDetail | null> {
@@ -114,8 +109,8 @@ async function ensureMedia(cms: EelZapClient): Promise<Map<string, SeedMedia>> {
     ...Object.entries(PHOTOS).map(([name, photo]) => ({
       name,
       file: join(PHOTOS_DIR, `${name}.png`),
-      filename: `${name}.jpg`,
-      contentType: 'image/jpeg',
+      filename: `${name}.png`,
+      contentType: 'image/png',
       alt: photo.alt,
     })),
     {
@@ -140,7 +135,8 @@ async function ensureMedia(cms: EelZapClient): Promise<Map<string, SeedMedia>> {
         log(`would upload ${filename}`)
         continue
       }
-      const { bytes, width, height } = await prepare(photo.file, photo.contentType)
+      const bytes = await readFile(photo.file)
+      const { width, height } = pngSize(bytes) ?? {}
       media = await cms.media.upload({
         file: new Blob([new Uint8Array(bytes)], { type: photo.contentType }),
         filename,
@@ -213,7 +209,8 @@ function fieldMatches(live: FieldInfo, def: FieldDef, sectionId: string | null):
     live.label === def.label &&
     !!live.required === !!def.required &&
     !!live.isUnique === !!def.unique &&
-    !!live.isFilterable === !!def.filterable &&
+    // Zap keeps a unique field filterable whatever is asked (it says so in a note).
+    !!live.isFilterable === (!!def.filterable || !!def.unique) &&
     !!live.isSortable === !!def.sortable &&
     (live.description ?? null) === (def.description ?? null) &&
     options === wanted &&
@@ -286,8 +283,14 @@ async function ensureSchema(cms: EelZapClient): Promise<void> {
         description: model.description,
       })
       bump('collections.created')
-    } else if (existing.name !== model.name || existing.description !== model.description) {
-      await cms.collections.update(model.key, { name: model.name, description: model.description })
+    }
+    // «Ruta en tu sitio» is not on the read answers, so it is sent every run (a no-op write).
+    await cms.collections.update(model.key, {
+      name: model.name,
+      description: model.description,
+      previewPath: model.previewPath,
+    })
+    if (existing && (existing.name !== model.name || existing.description !== model.description)) {
       bump('collections.updated')
     }
     await ensureFields(cms.collections as unknown as SchemaApi, model)
@@ -304,9 +307,13 @@ async function ensureSchema(cms: EelZapClient): Promise<void> {
       })
       bump('documents.created')
     } else if (existing.name !== model.name) {
-      await cms.documents.update(model.key, { name: model.name, description: model.description })
       bump('documents.updated')
     }
+    await cms.documents.update(model.key, {
+      name: model.name,
+      description: model.description,
+      previewPath: model.previewPath,
+    })
     await ensureFields(cms.documents as unknown as SchemaApi, model)
   }
 }
@@ -387,7 +394,7 @@ function normalizeDelivered(field: FieldDef, value: unknown): unknown {
         : null
     case 'CURRENCY':
       return typeof value === 'object'
-        ? { amountMinor: Number(record.amountMinor ?? record.amount), currency: record.currency }
+        ? { amountMinor: Number(record.amountMinor), currency: record.currency }
         : value
     case 'DATE':
       return String(value).slice(0, 10)
@@ -401,7 +408,10 @@ function normalizeDelivered(field: FieldDef, value: unknown): unknown {
 /** Rich text compares without image URLs (re-signed) and insignificant whitespace. */
 const normalizeHtml = (html: string) =>
   html
-    .replace(/\s(src|srcset|data-status|referrerpolicy)="[^"]*"/g, '')
+    // Delivery adds these to embedded images (`<img data-media-id>`); they are not content.
+    .replace(/<img\b[^>]*>/g, (img) =>
+      img.replace(/\s(src|srcset|data-status|data-signed-url|referrerpolicy)="[^"]*"/g, ''),
+    )
     .replace(/>\s+</g, '><')
     .trim()
 
@@ -480,6 +490,39 @@ async function ensureDocuments(cms: EelZapClient, media: Map<string, SeedMedia>)
 
 // ── Main ────────────────────────────────────────────────────────────────────
 
+/** At most one request per `ms`: 650 ms keeps a run under 100 requests a minute. */
+const PACE_MS = 650
+function pacedFetch(ms: number): typeof fetch {
+  let next = 0
+  return async (input, init) => {
+    const now = Date.now()
+    const at = Math.max(now, next)
+    next = at + ms
+    if (at > now) await new Promise((resolve) => setTimeout(resolve, at - now))
+    return fetch(input, init)
+  }
+}
+
+/**
+ * The site's base URL and «Otros dominios»: SEED_SITE_URL (default
+ * NEXT_PUBLIC_SITE_URL) and SEED_PREVIEW_ORIGINS (comma-separated).
+ */
+async function ensureSite(cms: EelZapClient, site: SiteInfo): Promise<void> {
+  const url = (process.env.SEED_SITE_URL || process.env.NEXT_PUBLIC_SITE_URL || '').replace(
+    /\/$/,
+    '',
+  )
+  const origins = (process.env.SEED_PREVIEW_ORIGINS ?? '')
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/$/, ''))
+    .filter(Boolean)
+  const sameOrigins = [...(site.previewOrigins ?? [])].sort().join() === [...origins].sort().join()
+  if (!url || ((site.url ?? '') === url && sameOrigins)) return
+  await cms.site.update({ url, previewOrigins: origins })
+  log(`site url ${url}${origins.length ? `, other origins ${origins.join(', ')}` : ''}`)
+  bump('site.updated')
+}
+
 async function main(): Promise<void> {
   const apiKey = process.env.EELZAP_API_KEY
   if (!apiKey?.startsWith('secret_')) {
@@ -494,14 +537,22 @@ async function main(): Promise<void> {
     baseUrl: process.env.EELZAP_BASE_URL,
     pathPrefix: process.env.EELZAP_PATH_PREFIX,
     timeout: 180_000,
-    fetch: retryingFetch(fetch, {
-      onWait: (ms) => log(`rate limited by Zap, waiting ${Math.round(ms / 1000)} s`),
-    }),
+    // Reads and Idempotency-Key creates are retried on 429; other writes are not,
+    // so every request is also paced under Zap's 100 a minute (`pacedFetch`).
+    fetch: pacedFetch(PACE_MS),
+    retry: {
+      onRetry: (event) =>
+        log(
+          `rate limited by Zap (${event.status}), retry ${event.attempt} in ${Math.round(event.delayMs / 1000)} s`,
+        ),
+    },
   })
   const site = await cms.site.get()
   log(
     `site ${site.key} (${site.name}), locales ${site.locales.join(', ')}${DRY_RUN ? ', dry run' : ''}`,
   )
+
+  if (stage('schema') && !DRY_RUN) await ensureSite(cms, site)
 
   const media = stage('media') || stage('content') ? await ensureMedia(cms) : new Map()
   if (DRY_RUN) {
@@ -519,11 +570,7 @@ async function main(): Promise<void> {
       .map(([k, v]) => `${k} ${v}`)
       .join(', ') || 'nothing to do',
   )
-  log('set in Zap (site settings, not on the public API):')
-  log(`  base URL = your site's origin; «Otros dominios» for any extra origin`)
-  for (const model of [...COLLECTIONS, ...DOCUMENTS]) {
-    log(`  «Ruta en tu sitio» ${model.key.padEnd(17)} ${model.previewPath}`)
-  }
+  log('still set by hand: the webhook endpoint in Nest (see README, "Seeding Zap")')
 }
 
 main().catch((error: unknown) => {

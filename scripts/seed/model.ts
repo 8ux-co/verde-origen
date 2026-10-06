@@ -91,8 +91,6 @@ const cafes: ModelDef = {
       section: 'Presentación',
       required: true,
       unique: true,
-      // Zap keeps a unique field filterable whatever is asked; say so, so re-runs converge.
-      filterable: true,
       description: 'Solo el número, por ejemplo 07. El sitio escribe «Lote 07».',
     },
     {

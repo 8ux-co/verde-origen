@@ -7,26 +7,26 @@ import type { DocumentDetail, DocumentMeta, MediaValue, Seo } from '@8ux-co/eelz
  * Document key: `contacto`
  */
 export interface ContactoContent {
-  /** Título | TEXT */
-  titulo: string | null
+  /** Título | TEXT | required */
+  titulo: string
 
-  /** Asuntos | LONG_TEXT */
-  asuntos: string | null
+  /** Introducción | LONG_TEXT | required */
+  intro: string
 
-  /** Mapa: enlace | URL */
-  mapa_url: string | null
-
-  /** Mayoristas: texto | LONG_TEXT */
-  mayoristas_texto: string | null
-
-  /** Introducción | LONG_TEXT */
-  intro: string | null
+  /** Asuntos | LONG_TEXT | required */
+  asuntos: string
 
   /** Mapa | IMAGE */
   mapa_imagen: MediaValue | null
 
+  /** Mapa: enlace | URL */
+  mapa_url: string | null
+
   /** Mayoristas: título | TEXT */
   mayoristas_titulo: string | null
+
+  /** Mayoristas: texto | LONG_TEXT */
+  mayoristas_texto: string | null
 
   /** Mayoristas: correo | EMAIL */
   mayoristas_email: string | null

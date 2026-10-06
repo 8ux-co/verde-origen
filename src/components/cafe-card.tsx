@@ -62,10 +62,10 @@ export async function CafeCard({ cafe, priority }: { cafe: CafesItem; priority?:
       <div className="flex flex-col gap-[6px] lg:mt-[18px] lg:gap-[10px] lg:border-t-[1.5px] lg:border-tinta lg:pt-5">
         <span className="eyebrow overflow-hidden text-[11px]! text-ellipsis whitespace-nowrap lg:text-[13px]!">
           Lote {f.text('lote')} · <span {...f.attrs('region')}>{region}</span>
-          <span className="hidden lg:inline">, {f.text('municipio')}</span>
+          <span className="hidden min-[1400px]:inline">, {f.text('municipio')}</span>
         </span>
         <Link href={href} className="no-underline">
-          <h3 className="m-0 font-display text-[26px] leading-[0.95] font-extrabold text-tinta uppercase lg:text-[40px]">
+          <h3 className="m-0 font-display text-[26px] leading-[0.95] font-extrabold text-tinta uppercase lg:text-[40px] lg:max-xl:text-[32px]">
             {f.text('nombre')}
           </h3>
         </Link>
@@ -76,7 +76,7 @@ export async function CafeCard({ cafe, priority }: { cafe: CafesItem; priority?:
         <span className="font-story text-[15px] leading-[1.35] text-tinta-2 italic lg:text-[19px] lg:text-tinta">
           {notesSentence(f.text('notas'))}
         </span>
-        <div className="mt-1 flex items-center justify-between lg:mt-[10px]">
+        <div className="mt-1 flex items-center justify-between lg:mt-[10px] lg:max-xl:flex-col lg:max-xl:items-start lg:max-xl:gap-3">
           <span className="inline-flex items-baseline gap-[7px] whitespace-nowrap">
             <span
               className="font-display text-[20px] leading-none font-extrabold tracking-[0.01em] text-tinta lg:text-[26px]"

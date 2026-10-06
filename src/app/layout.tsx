@@ -3,9 +3,8 @@ import { Big_Shoulders, Newsreader } from 'next/font/google'
 import { draftMode } from 'next/headers'
 
 import { cleanStega } from '@8ux-co/eelzap'
-import { DEFAULT_DRAFT_ROUTE, ZapPreview } from '@8ux-co/eelzap/next'
+import { ZapPreview } from '@8ux-co/eelzap/next'
 
-import { DevPreviewBridge } from '@/components/dev-preview-bridge'
 import { SiteFooter } from '@/components/site-footer'
 import { SiteHeader } from '@/components/site-header'
 import { WhatsAppFloat } from '@/components/whatsapp-float'
@@ -63,7 +62,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     draftMode(),
   ])
   const faqLabel = cleanStega(faqPage.content.titulo ?? '') || 'Preguntas frecuentes'
-  const devZap = process.env.NODE_ENV === 'development' ? env.devZapOrigin : undefined
 
   return (
     <html lang="es-CO" className={`${bigShoulders.variable} ${newsreader.variable}`}>
@@ -78,16 +76,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <main id="contenido">{children}</main>
         <SiteFooter config={config} faqLabel={faqLabel} />
         <WhatsAppFloat config={config} />
-        {devZap ? (
-          <DevPreviewBridge
-            zapOrigin={devZap}
-            authOrigin={env.devAuthOrigin}
-            siteKey={env.siteKey}
-            siteId={env.siteId}
-            draftRoute={DEFAULT_DRAFT_ROUTE}
-            serverPreview={draft.isEnabled}
-          />
-        ) : null}
         <ZapPreview
           siteKey={env.siteKey}
           siteId={env.siteId}

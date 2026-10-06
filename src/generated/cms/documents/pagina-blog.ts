@@ -7,8 +7,8 @@ import type { DocumentDetail, DocumentMeta, Seo } from '@8ux-co/eelzap'
  * Document key: `pagina-blog`
  */
 export interface PaginaBlogContent {
-  /** Título | TEXT */
-  titulo: string | null
+  /** Título | TEXT | required */
+  titulo: string
 
   /** Introducción | LONG_TEXT */
   intro: string | null

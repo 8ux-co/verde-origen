@@ -10,11 +10,14 @@ export function WhatsAppFloatLink({
   href,
   label,
   className,
+  attrs,
   children,
 }: {
   href: string
   label: string
   className: string
+  /** The URL field's tag: the preview updates `href`, not the label. */
+  attrs?: { 'data-zap'?: string }
   children: ReactNode
 }) {
   const [footerInView, setFooterInView] = useState(false)
@@ -30,6 +33,7 @@ export function WhatsAppFloatLink({
   return (
     <a
       href={href}
+      {...attrs}
       target="_blank"
       rel="noopener"
       aria-label={label}

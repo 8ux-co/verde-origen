@@ -5,7 +5,6 @@ import { createClient, type EelZapClient } from '@8ux-co/eelzap'
 import { getValidPreviewToken } from '@8ux-co/eelzap/next'
 
 import { env } from './env'
-import { retryingFetch } from './zap-fetch'
 
 /**
  * The Zap client for this request.
@@ -62,12 +61,12 @@ export async function zap(
   const common = { baseUrl: env.baseUrl, pathPrefix: env.pathPrefix, timeout: 90_000 }
   if (token) {
     return {
-      cms: createClient({ ...common, apiKey: token, fetch: retryingFetch(noStoreFetch) }),
+      cms: createClient({ ...common, apiKey: token, fetch: noStoreFetch }),
       preview: true,
     }
   }
   return {
-    cms: createClient({ ...common, apiKey: env.apiKey, fetch: retryingFetch(taggedFetch(tags)) }),
+    cms: createClient({ ...common, apiKey: env.apiKey, fetch: taggedFetch(tags) }),
     preview: false,
   }
 }

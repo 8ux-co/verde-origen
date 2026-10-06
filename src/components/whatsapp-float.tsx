@@ -18,6 +18,7 @@ export function WhatsAppFloat({ config }: { config: ConfiguracionDocument }) {
     <WhatsAppFloatLink
       href={href}
       label={COPY.whatsapp}
+      attrs={f.attrs('whatsapp_url')}
       className="fixed right-7 bottom-7 z-45 hidden h-[52px] items-center gap-[10px] bg-hoja px-5 font-display text-[16px] leading-none font-bold tracking-[0.1em] text-niebla uppercase no-underline shadow-[0_8px_20px_rgba(22,32,26,0.22)] hover:bg-tinta lg:inline-flex"
     >
       <svg

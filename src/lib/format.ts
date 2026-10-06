@@ -36,16 +36,12 @@ export function formatCOP(pesos: number): string {
 }
 
 /** A Zap CURRENCY value (minor units) as display money. */
-/**
- * A CURRENCY value as Zap delivers it, in minor units. The delivery API is
- * moving from `amount` to `amountMinor` (both sent during the change); read
- * whichever is there.
- */
-export type CurrencyLike = { amountMinor?: number; amount?: number; currency: string }
+/** A CURRENCY value as Zap delivers it: `amountMinor` in minor units (centavos). */
+export type CurrencyLike = { amountMinor: number; currency: string }
 
 /** Minor units of a CURRENCY value, or null when it carries no number. */
 export function minorUnits(value: CurrencyLike): number | null {
-  const minor = value.amountMinor ?? value.amount
+  const minor = value.amountMinor
   return typeof minor === 'number' && Number.isFinite(minor) ? minor : null
 }
 

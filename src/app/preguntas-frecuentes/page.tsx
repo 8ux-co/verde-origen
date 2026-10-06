@@ -128,6 +128,7 @@ export default async function PreguntasPage() {
             {g.value('whatsapp_url') ? (
               <a
                 href={g.value('whatsapp_url') ?? '#'}
+                {...g.attrs('whatsapp_url')}
                 target="_blank"
                 rel="noopener"
                 className="btn"

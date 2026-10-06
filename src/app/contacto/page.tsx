@@ -33,7 +33,12 @@ export default async function ContactoPage() {
 
   return (
     <>
-      <PageHead crumbs={[{ label: 'Contacto' }]} title={f.text('titulo')} intro={f.text('intro')} />
+      <PageHead
+        crumbs={[{ label: 'Contacto' }]}
+        title={f.text('titulo')}
+        intro={f.text('intro')}
+        titleClass="text-(length:--fl-page-word)!"
+      />
 
       <section className="wrap pt-0 pb-14 lg:pt-6 lg:pb-28">
         <div className="grid gap-14 lg:grid-cols-[7fr_5fr] lg:gap-24">
@@ -91,6 +96,7 @@ export default async function ContactoPage() {
               {whatsapp ? (
                 <a
                   href={whatsapp}
+                  {...g.attrs('whatsapp_url')}
                   target="_blank"
                   rel="noopener"
                   className="inline-flex items-center gap-3 font-story text-[19px] leading-none text-tinta"
@@ -115,6 +121,7 @@ export default async function ContactoPage() {
               {page.content.mapa_url ? (
                 <a
                   href={f.value('mapa_url') ?? '#'}
+                  {...f.attrs('mapa_url')}
                   target="_blank"
                   rel="noopener"
                   className="inline-flex items-center gap-3 font-story text-[19px] leading-none text-tinta"
@@ -175,7 +182,11 @@ export default async function ContactoPage() {
               </p>
               {mayoristas ? (
                 <div>
-                  <a href={`mailto:${mayoristas}`} className="btn btn--on-dark">
+                  <a
+                    href={`mailto:${mayoristas}`}
+                    className="btn btn--on-dark"
+                    {...f.attrs('mayoristas_email')}
+                  >
                     Escribir a mayoristas
                   </a>
                 </div>

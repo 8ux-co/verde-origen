@@ -121,12 +121,15 @@ export function CafeBuyBox({
                     </span>
                   ) : null}
                 </span>
+                {/* The tag sits on the price alone: the preview rewrites its whole text. */}
                 <span
-                  className={`inline-flex items-center gap-[6px] font-display text-[19px] leading-none font-bold tracking-[0.02em] ${checked ? 'text-cereza' : ''}`}
+                  className={`font-display text-[19px] leading-none font-bold tracking-[0.02em] ${checked ? 'text-cereza' : ''}`}
+                  {...attrs[option.key]}
                 >
-                  {/* The tag sits on the price alone: the preview rewrites its whole text. */}
-                  <span {...attrs[option.key]}>{soldOut ? 'Agotado' : money(optionValue)}</span>
-                  {checked ? (
+                  {soldOut ? 'Agotado' : money(optionValue)}
+                </span>
+                {checked ? (
+                  <span className="absolute top-2.5 right-2.5 hidden text-cereza lg:block">
                     <svg
                       width="16"
                       height="16"
@@ -140,8 +143,8 @@ export function CafeBuyBox({
                     >
                       <path d="M20 6 9 17l-5-5" />
                     </svg>
-                  ) : null}
-                </span>
+                  </span>
+                ) : null}
               </label>
             )
           })}

@@ -7,14 +7,14 @@ import type { DocumentDetail, DocumentMeta, MediaValue, Seo } from '@8ux-co/eelz
  * Document key: `pagina-origenes`
  */
 export interface PaginaOrigenesContent {
-  /** Mapa de regiones | IMAGE */
-  mapa: MediaValue | null
+  /** Título | TEXT | required */
+  titulo: string
 
   /** Introducción | LONG_TEXT */
   intro: string | null
 
-  /** Título | TEXT */
-  titulo: string | null
+  /** Mapa de regiones | IMAGE */
+  mapa: MediaValue | null
 }
 
 export type PaginaOrigenesDocument = DocumentDetail<PaginaOrigenesContent> & {

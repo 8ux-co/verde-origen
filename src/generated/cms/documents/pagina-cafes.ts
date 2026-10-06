@@ -7,11 +7,11 @@ import type { DocumentDetail, DocumentMeta, Seo } from '@8ux-co/eelzap'
  * Document key: `pagina-cafes`
  */
 export interface PaginaCafesContent {
+  /** Título | TEXT | required */
+  titulo: string
+
   /** Introducción | LONG_TEXT */
   intro: string | null
-
-  /** Título | TEXT */
-  titulo: string | null
 }
 
 export type PaginaCafesDocument = DocumentDetail<PaginaCafesContent> & { meta: DocumentMeta } & {

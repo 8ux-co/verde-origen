@@ -5,18 +5,20 @@ import { fields } from '@8ux-co/eelzap/fields'
 
 import type { ConfiguracionDocument } from '@/generated/cms'
 import { COPY } from '@/lib/copy'
-import { slots } from '@/lib/fields-extra'
 
 import { CartCount } from './cart'
 import { MobileMenu, NavLinks, type NavItem } from './site-nav'
 
 export function navItems(config: ConfiguracionDocument): NavItem[] {
   const f = fields(config)
-  return slots(f, 'nav', 5, 'texto')
+  return f
+    .list('nav', 5)
     .filter((slot) => !slot.empty)
     .map((slot) => ({
       label: slot.text('texto'),
       href: slot.value('url') || '/',
+      // URL fields update `href` in the preview, never the label.
+      attrs: slot.attrs('url'),
     }))
 }
 

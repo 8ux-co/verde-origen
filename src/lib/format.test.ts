@@ -35,21 +35,21 @@ describe('money', () => {
     expect(formatCOP(168000)).toBe(`$${NBSP}168.000`)
   })
 
-  it('reads amountMinor first, then amount, and never prints NaN', () => {
+  it('reads amountMinor and never prints NaN', () => {
     expect(formatMoney({ amountMinor: 4_800_000, currency: 'COP' })).toBe(`$${NBSP}48.000`)
-    expect(pesos({ amountMinor: 4_800_000, amount: 1, currency: 'COP' })).toBe(48_000)
-    expect(formatMoney({ currency: 'COP' })).toBe('')
-    expect(pesos({ currency: 'COP' })).toBeNull()
+    expect(pesos({ amountMinor: 4_800_000, currency: 'COP' })).toBe(48_000)
+    expect(formatMoney({ amountMinor: Number.NaN, currency: 'COP' })).toBe('')
+    expect(pesos({ amountMinor: Number.NaN, currency: 'COP' })).toBeNull()
   })
 
   it('reads Zap CURRENCY values in minor units', () => {
-    expect(formatMoney({ amount: 4_800_000, currency: 'COP' })).toBe(`$${NBSP}48.000`)
-    expect(pesos({ amount: 8_900_000, currency: 'COP' })).toBe(89_000)
+    expect(formatMoney({ amountMinor: 4_800_000, currency: 'COP' })).toBe(`$${NBSP}48.000`)
+    expect(pesos({ amountMinor: 8_900_000, currency: 'COP' })).toBe(89_000)
   })
 
   it('decorates a foreign amount exactly once', () => {
-    expect(formatMoney({ amount: 1200, currency: 'USD' })).toBe(`US$${NBSP}12,00`)
-    expect(formatMoney({ amount: 1200, currency: 'EUR' })).toBe(`12,00${NBSP}EUR`)
+    expect(formatMoney({ amountMinor: 1200, currency: 'USD' })).toBe(`US$${NBSP}12,00`)
+    expect(formatMoney({ amountMinor: 1200, currency: 'EUR' })).toBe(`12,00${NBSP}EUR`)
   })
 
   it('passes text through (a live preview value is already formatted) and has no pesos for it', () => {
