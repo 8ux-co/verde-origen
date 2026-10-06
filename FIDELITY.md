@@ -145,3 +145,43 @@ while `src/lib/format.ts` and the 0.10.0 client types read `amount`.
 
 No console errors and no 4xx or 5xx responses on the 11 routes, apart from
 the accepted legal-link 404s.
+
+## Re-review
+
+Reviewed build: `58b8051`. Every route was re-captured at 390, 768, 1024 and
+1440, and each item was checked against computed styles.
+
+**Verdict: ready once the three small fixes below land.** All 15 must-fixes
+pass. Of the nice-to-haves addressed, 16–18, 20, 24 and 25 pass and 21 passes
+with a caveat; 22 and 23 are still open. The «$ NaN» prices are gone: the site
+now reads `amountMinor` or `amount`, and an empty price renders blank, which
+is right for «agotado».
+
+### Must-fix before release
+
+1. **Regression from item 6:** the eyebrow guard cuts café card labels short
+   between 1024 and 1439px. At 1280 the label reads «LOTE 21 · HUILA Y
+   TOLIM…». Below `xl`, drop the municipality: render
+   `<span className="hidden xl:inline">, {municipio}</span>`. Keep the
+   ellipsis only as a last resort.
+2. **Horizontal scroll at 1024 (existing problem):** on `/cafes` the
+   «Agregar» buttons overlap the prices and the page is 1048px wide. Between
+   `lg` and `xl`, stack the price above the button in `cafe-card.tsx` (or
+   use 2 columns in the grid until `xl`).
+3. **Horizontal scroll on Contacto at 390 (existing problem):** the
+   «ESCRÍBENOS» H1 is 409px wide. Use the `--fl-cafe` pattern so it bottoms
+   out at a size that fits 350px, and add `break-words` as a guard.
+
+### Still open, nice-to-have
+
+- **21:** the ✓ on the selected size card should sit in the top-right corner
+  (`absolute right-2.5 top-2.5`), not after the price.
+- **22:** decision: list related coffees from the same region first, then the
+  same process, each group by `orden`. That gives El Mirador, La Cumbre and
+  Mañanera for La Esperanza, as on the board.
+- **23:** the mobile origin band eyebrow should say «El origen».
+- **Upstream:** the 0.10.0 client types still say `amount`. Bump the client
+  when Zap releases the `amountMinor` types.
+
+There are no console errors and no 4xx or 5xx responses. The mobile-only
+changes didn't break desktop: layouts at 768 and 1440 are intact.
