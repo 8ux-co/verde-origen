@@ -61,7 +61,8 @@ export async function CafeCard({ cafe, priority }: { cafe: CafesItem; priority?:
       </Link>
       <div className="flex flex-col gap-[6px] lg:mt-[18px] lg:gap-[10px] lg:border-t-[1.5px] lg:border-tinta lg:pt-5">
         <span className="eyebrow overflow-hidden text-[11px]! text-ellipsis whitespace-nowrap lg:text-[13px]!">
-          Lote {f.text('lote')} · <span {...f.attrs('region')}>{region}</span>
+          Lote <span {...f.attrs('lote')}>{f.text('lote')}</span> ·{' '}
+          <span {...f.attrs('region')}>{region}</span>
           <span className="hidden min-[1400px]:inline">, {f.text('municipio')}</span>
         </span>
         <Link href={href} className="no-underline">

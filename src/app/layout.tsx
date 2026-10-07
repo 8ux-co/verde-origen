@@ -3,6 +3,7 @@ import { Big_Shoulders, Newsreader } from 'next/font/google'
 import { draftMode } from 'next/headers'
 
 import { cleanStega } from '@8ux-co/eelzap'
+import { fields } from '@8ux-co/eelzap/fields'
 import { ZapPreview } from '@8ux-co/eelzap/next'
 
 import { SiteFooter } from '@/components/site-footer'
@@ -61,7 +62,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     getDocument('pagina-preguntas'),
     draftMode(),
   ])
-  const faqLabel = cleanStega(faqPage.content.titulo ?? '') || 'Preguntas frecuentes'
+  // The page's own title, with its stega marker in preview: the header and
+  // footer links to the FAQ then select `pagina-preguntas#titulo`.
+  const faqTitle = fields(faqPage).text('titulo')
+  const faqLabel = cleanStega(faqTitle).trim() ? faqTitle : 'Preguntas frecuentes'
 
   return (
     <html lang="es-CO" className={`${bigShoulders.variable} ${newsreader.variable}`}>

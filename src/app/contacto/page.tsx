@@ -27,7 +27,7 @@ export default async function ContactoPage() {
   const [page, config] = await Promise.all([getDocument('contacto'), getDocument('configuracion')])
   const f = fields(page)
   const g = fields(config)
-  const address = lines(g.text('direccion'))
+  const address = lines(g.value('direccion'))
   const whatsapp = g.value('whatsapp_url')
   const mayoristas = f.value('mayoristas_email')
 
@@ -50,7 +50,10 @@ export default async function ContactoPage() {
           <div className="relative flex flex-col gap-7">
             <div className="flex flex-col gap-3">
               <span className="eyebrow">Taller y tienda</span>
-              <h2 className="m-0 font-display text-[32px] leading-[0.95] font-extrabold uppercase lg:text-[38px]">
+              <h2
+                className="m-0 font-display text-[32px] leading-[0.95] font-extrabold uppercase lg:text-[38px]"
+                {...g.attrs('direccion')}
+              >
                 {address.map((line, i) => (
                   <span key={i}>
                     {i > 0 ? ', ' : ''}
@@ -59,8 +62,8 @@ export default async function ContactoPage() {
                 ))}
               </h2>
             </div>
-            <div>
-              {pairs(g.text('horario')).map(([day, time], i) => (
+            <div {...g.attrs('horario')}>
+              {pairs(g.value('horario')).map(([day, time], i) => (
                 <div
                   key={i}
                   className="flex justify-between border-t border-linea py-3 font-story text-[17px] leading-[1.3]"

@@ -61,8 +61,15 @@ function OrigenRow({
       </Link>
       <div className="flex flex-col gap-4">
         <span className="eyebrow lg:text-[14px]!">
-          <span {...f.attrs('region')}>{c.region.label}</span> · {f.text('municipio')}
-          {c.vereda ? <> · {f.text('vereda')}</> : null}
+          <span {...f.attrs('region')}>{c.region.label}</span>
+          {' · '}
+          <span {...f.attrs('municipio')}>{f.text('municipio')}</span>
+          {c.vereda ? (
+            <>
+              {' · '}
+              <span {...f.attrs('vereda')}>{f.text('vereda')}</span>
+            </>
+          ) : null}
         </span>
         <h2 className="m-0 font-display text-[52px] leading-[0.9] font-black uppercase lg:text-[76px]">
           <Link href={href} className="text-tinta no-underline hover:underline">

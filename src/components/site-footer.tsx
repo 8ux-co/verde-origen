@@ -22,7 +22,7 @@ export function SiteFooter({
 }) {
   const f = fields(config)
   const brand = cleanStega(config.content.logo?.alt ?? '') || 'Verde Origen'
-  const hours = pairs(f.text('horario')).filter(([, time]) => !/cerrado/i.test(time))
+  const hours = pairs(f.value('horario')).filter(([, time]) => !/cerrado/i.test(time))
   const socials = (
     [
       ['instagram_url', 'Instagram'],
@@ -68,7 +68,7 @@ export function SiteFooter({
             <ul className="m-0 flex list-none flex-col gap-3 p-0 font-story text-[17px] leading-[1.35]">
               {navItems(config).map((nav) => (
                 <li key={nav.href}>
-                  <Link href={nav.href} className={item}>
+                  <Link href={nav.href} className={item} {...nav.attrs}>
                     {nav.label}
                   </Link>
                 </li>
@@ -84,14 +84,15 @@ export function SiteFooter({
           <div className="order-last col-span-2 md:order-none md:col-span-1">
             <h2 className={heading}>{COPY.shop}</h2>
             <div className="flex flex-col gap-[14px] font-story text-[17px] leading-[1.45]">
-              <p className="m-0">
-                {lines(f.text('direccion')).map((line, i) => (
+              {/* LONG_TEXT fields shown as lines: each tag covers its block. */}
+              <p className="m-0" {...f.attrs('direccion')}>
+                {lines(f.value('direccion')).map((line, i) => (
                   <span key={i} className="block">
                     {line}
                   </span>
                 ))}
               </p>
-              <p className="m-0">
+              <p className="m-0" {...f.attrs('horario')}>
                 {hours.map(([day, time], i) => (
                   <span key={i} className="block">
                     {day}
@@ -142,7 +143,8 @@ export function SiteFooter({
 
         <div className="mt-14 flex flex-col gap-4 border-t border-[rgba(237,239,233,0.22)] pt-6 lg:mt-[72px] lg:flex-row lg:items-center lg:justify-between">
           <span className="font-story text-[15px] leading-[1.4] text-hoja-texto">
-            © {new Date().getFullYear()} {f.text('razon_social')}
+            © {new Date().getFullYear()}{' '}
+            <span {...f.attrs('razon_social')}>{f.text('razon_social')}</span>
             {cleanStega(f.text('razon_social')).endsWith('.') ? ' ' : '. '}
             <span className="hidden lg:inline">{COPY.pricesNote}</span>
           </span>

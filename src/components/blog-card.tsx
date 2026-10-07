@@ -61,7 +61,12 @@ export function BlogCard({
           <time dateTime={String(post.content.fecha)} {...f.attrs('fecha')}>
             {formatDate(post.content.fecha)}
           </time>
-          {author ? <> · {fields(author).text('nombre')}</> : null}
+          {author ? (
+            <>
+              {' · '}
+              <span {...fields(author).attrs('nombre')}>{fields(author).text('nombre')}</span>
+            </>
+          ) : null}
         </span>
       </div>
     </article>

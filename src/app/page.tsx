@@ -1,6 +1,5 @@
 import Link from 'next/link'
 
-import { cleanStega } from '@8ux-co/eelzap'
 import { fields } from '@8ux-co/eelzap/fields'
 
 import { BlogCard } from '@/components/blog-card'
@@ -57,8 +56,9 @@ export default async function InicioPage() {
   const f = fields(inicio)
   const destacados = cafes.filter((cafe) => cafe.content.destacado)
   const first = destacados[0]
+  const ff = first ? fields(first) : null
   const datos = f.list('dato', 4).filter((slot) => !slot.empty)
-  const historia = paragraphs(f.text('historia_texto'))
+  const historia = paragraphs(f.value('historia_texto'))
 
   return (
     <>
@@ -104,16 +104,20 @@ export default async function InicioPage() {
               priority
               dark
             />
-            {first ? (
+            {first && ff ? (
               <div
                 aria-hidden="true"
                 className="stamp top-11 right-[14px] -rotate-5 lg:top-auto lg:right-auto lg:bottom-24 lg:-left-16"
               >
-                <span className="stamp__big">Lote {cleanStega(first.content.lote)}</span>
-                <span className="stamp__small hidden lg:block">
-                  {cleanStega(first.content.nombre)}
+                <span className="stamp__big">
+                  Lote <span {...ff.attrs('lote')}>{ff.value('lote')}</span>
                 </span>
-                <span className="stamp__small">{formatInt(first.content.altitud)} msnm</span>
+                <span className="stamp__small hidden lg:block" {...ff.attrs('nombre')}>
+                  {ff.value('nombre')}
+                </span>
+                <span className="stamp__small">
+                  <span {...ff.attrs('altitud')}>{formatInt(first.content.altitud)}</span> msnm
+                </span>
               </div>
             ) : null}
           </div>
@@ -222,7 +226,11 @@ export default async function InicioPage() {
                   <p className="m-0 hidden font-story text-[18px] leading-[1.45] text-niebla lg:block">
                     {region.farms.map((farm) => (
                       <span key={farm.slug} className="block">
-                        {fields(farm).text('nombre')}, {fields(farm).text('municipio')}
+                        <span {...fields(farm).attrs('nombre')}>{fields(farm).text('nombre')}</span>
+                        {', '}
+                        <span {...fields(farm).attrs('municipio')}>
+                          {fields(farm).text('municipio')}
+                        </span>
                       </span>
                     ))}
                   </p>
@@ -254,11 +262,16 @@ export default async function InicioPage() {
             <h2 className="m-0 font-display text-[40px] leading-[0.92] font-extrabold text-balance uppercase lg:text-[60px]">
               {f.text('historia_titulo')}
             </h2>
-            {historia.map((paragraph, i) => (
-              <p key={i} className={`body ${i > 0 ? 'hidden lg:block' : ''}`}>
-                {paragraph}
-              </p>
-            ))}
+            {historia.length > 0 ? (
+              // One LONG_TEXT shown as paragraphs: the tag covers them all.
+              <div className="flex flex-col gap-4 lg:gap-[22px]" {...f.attrs('historia_texto')}>
+                {historia.map((paragraph, i) => (
+                  <p key={i} className={`body ${i > 0 ? 'hidden lg:block' : ''}`}>
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            ) : null}
             {f.text('historia_cta_texto') ? (
               <div className="lg:mt-[6px]">
                 <ArrowLink

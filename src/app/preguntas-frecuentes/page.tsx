@@ -80,7 +80,7 @@ export default async function PreguntasPage() {
                     href={`#${anchor(topic.value)}`}
                     className="flex justify-between border-t border-linea py-3 font-display text-[16px] leading-[1.2] font-bold tracking-[0.1em] text-tinta uppercase no-underline hover:text-cereza"
                   >
-                    <span>{topic.label}</span>
+                    <span {...fields(topic.items[0]!).attrs('tema')}>{topic.label}</span>
                     <span className="text-tinta-2">{topic.items.length}</span>
                   </a>
                 </li>
@@ -98,6 +98,7 @@ export default async function PreguntasPage() {
                 <h2
                   id={`${anchor(topic.value)}-h`}
                   className="m-0 mb-2 font-display text-[32px] leading-none font-extrabold uppercase lg:text-[40px]"
+                  {...fields(topic.items[0]!).attrs('tema')}
                 >
                   {topic.label}
                 </h2>

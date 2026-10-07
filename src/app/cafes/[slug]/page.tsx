@@ -57,13 +57,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 }
 
-/** «de la vereda Bruselas», «del corregimiento de Gaitania», or the town for a blend. */
-function placePhrase(cafe: CafesItem, origen: OrigenesItem | null): string {
+/**
+ * «de la vereda Bruselas», «del corregimiento de Gaitania», or the town for a
+ * blend: the lead words, the place, and the field the place comes from (the
+ * farm's `vereda` or the coffee's `municipio`), so the place is tagged alone.
+ */
+function placePhrase(
+  cafe: CafesItem,
+  origen: OrigenesItem | null,
+): { lead: string; place: string; field: 'vereda' | 'municipio' } {
   const vereda = cleanStega(origen?.content.vereda ?? '')
   if (cafe.content.region.value === 'varias' || !vereda)
-    return `de ${cleanStega(cafe.content.municipio)}`
+    return { lead: 'de', place: cleanStega(cafe.content.municipio), field: 'municipio' }
   const lower = vereda.charAt(0).toLocaleLowerCase('es-CO') + vereda.slice(1)
-  return /^vereda\b/i.test(vereda) ? `de la ${lower}` : `del ${lower}`
+  return { lead: /^vereda\b/i.test(vereda) ? 'de la' : 'del', place: lower, field: 'vereda' }
 }
 
 export default async function CafePage({ params }: Props) {
@@ -92,9 +99,10 @@ export default async function CafePage({ params }: Props) {
     })
   }
 
-  const recipes = pairs(f.text('preparacion'))
+  const recipes = pairs(f.value('preparacion'))
   const related = relatedCafes(cafe, cafes)
   const region = regionText(cafe, origenes)
+  const place = placePhrase(cafe, origen)
 
   return (
     <>
@@ -118,8 +126,11 @@ export default async function CafePage({ params }: Props) {
           <div className="flex flex-col gap-[22px] lg:gap-[26px]">
             <div className="flex flex-col gap-3 lg:gap-4">
               <span className="eyebrow lg:text-[15px]!">
-                Lote {f.text('lote')} · <span {...f.attrs('region')}>{region}</span>,{' '}
-                {f.text('municipio')}
+                Lote <span {...f.attrs('lote')}>{f.text('lote')}</span>
+                {' · '}
+                <span {...f.attrs('region')}>{region}</span>
+                {', '}
+                <span {...f.attrs('municipio')}>{f.text('municipio')}</span>
               </span>
               <h1 className="m-0 font-display text-(length:--fl-cafe) leading-[0.88] font-black tracking-[-0.005em] text-balance uppercase">
                 {f.text('nombre')}
@@ -132,8 +143,9 @@ export default async function CafePage({ params }: Props) {
               <span className="eyebrow eyebrow--muted hidden lg:inline-block">
                 Notas de catación
               </span>
-              <ul className="m-0 flex list-none flex-wrap gap-2 p-0">
-                {notesList(f.text('notas')).map((note, i) => (
+              {/* One TEXT field split into chips: the tag covers the list. */}
+              <ul className="m-0 flex list-none flex-wrap gap-2 p-0" {...f.attrs('notas')}>
+                {notesList(f.value('notas')).map((note, i) => (
                   <li key={i} className="chip">
                     {note}
                   </li>
@@ -160,7 +172,10 @@ export default async function CafePage({ params }: Props) {
           <div className="flex flex-col gap-3 lg:gap-4">
             <span className="eyebrow">Ficha de lote</span>
             <h2 className="m-0 font-display text-(length:--fl-h2-sm) leading-[0.92] font-extrabold text-balance uppercase">
-              Lote {f.text('lote')}, {placePhrase(cafe, origen)}
+              Lote <span {...f.attrs('lote')}>{f.text('lote')}</span>, {place.lead}{' '}
+              <span {...(place.field === 'vereda' && o ? o.attrs('vereda') : f.attrs('municipio'))}>
+                {place.place}
+              </span>
             </h2>
           </div>
           <dl className="ficha ficha--2">
@@ -184,9 +199,12 @@ export default async function CafePage({ params }: Props) {
             <div>
               <dt>Municipio</dt>
               <dd>
-                {f.text('municipio')}
+                <span {...f.attrs('municipio')}>{f.text('municipio')}</span>
                 {c.region.value !== 'varias' ? (
-                  <span {...f.attrs('region')}>, {c.region.label}</span>
+                  <>
+                    {', '}
+                    <span {...f.attrs('region')}>{c.region.label}</span>
+                  </>
                 ) : null}
               </dd>
             </div>
@@ -209,8 +227,10 @@ export default async function CafePage({ params }: Props) {
                 {c.proceso_detalle ? (
                   <>
                     ,{' '}
-                    {f.text('proceso_detalle').charAt(0).toLocaleLowerCase('es-CO') +
-                      f.text('proceso_detalle').slice(1)}
+                    <span {...f.attrs('proceso_detalle')}>
+                      {f.text('proceso_detalle').charAt(0).toLocaleLowerCase('es-CO') +
+                        f.text('proceso_detalle').slice(1)}
+                    </span>
                   </>
                 ) : null}
               </dd>
@@ -256,7 +276,8 @@ export default async function CafePage({ params }: Props) {
           {recipes.length > 0 ? (
             <div className="mt-6 lg:mt-0">
               <span className="eyebrow">Cómo lo preparamos</span>
-              <div className="mt-[14px]">
+              {/* One LONG_TEXT shown as method and recipe rows: the tag covers them all. */}
+              <div className="mt-[14px]" {...f.attrs('preparacion')}>
                 {recipes.map(([method, recipe], i) => (
                   <div key={i} className="border-t border-linea py-4">
                     <span className="block font-display text-[22px] leading-none font-extrabold uppercase">

@@ -125,8 +125,11 @@ export default async function ArticuloPage({ params }: Props) {
               <span className="flex flex-col gap-[5px] lg:gap-[6px]">
                 {author && a ? (
                   <span className="font-display text-[14px] leading-none font-bold tracking-[0.1em] uppercase lg:text-[16px]">
-                    {a.text('nombre')}
-                    <span className="hidden lg:inline"> · {a.text('cargo')}</span>
+                    <span {...a.attrs('nombre')}>{a.text('nombre')}</span>
+                    <span className="hidden lg:inline">
+                      {' · '}
+                      <span {...a.attrs('cargo')}>{a.text('cargo')}</span>
+                    </span>
                   </span>
                 ) : null}
                 <span className="font-story text-[14px] leading-none text-tinta-2 lg:text-[16px]">
@@ -181,8 +184,12 @@ export default async function ArticuloPage({ params }: Props) {
                 </Link>
                 <div className="flex flex-col gap-2">
                   <span className="eyebrow eyebrow--sm">
-                    Lote {k.text('lote')} · {regionText(cafe, origenes)}
-                    <span className="hidden lg:inline">, {k.text('municipio')}</span>
+                    Lote <span {...k.attrs('lote')}>{k.text('lote')}</span> ·{' '}
+                    <span {...k.attrs('region')}>{regionText(cafe, origenes)}</span>
+                    <span className="hidden lg:inline">
+                      {', '}
+                      <span {...k.attrs('municipio')}>{k.text('municipio')}</span>
+                    </span>
                   </span>
                   <h3 className="m-0 font-display text-[26px] leading-[0.95] font-extrabold uppercase lg:text-[32px]">
                     {k.text('nombre')}

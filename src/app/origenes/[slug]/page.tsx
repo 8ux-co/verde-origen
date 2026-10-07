@@ -11,7 +11,7 @@ import { Photo } from '@/components/photo'
 import { RichText } from '@/components/rich-text'
 import { AltitudeRange, ArrowLink, Breadcrumbs } from '@/components/ui'
 import { getCafes, getDocument, getItem, getPublishedCollection, relationSlug } from '@/lib/content'
-import { altitudeRange, formatDecimal, lines, producerLabel } from '@/lib/format'
+import { formatDecimal, formatInt, lines, producerLabel } from '@/lib/format'
 import { splitAfterParagraph, takeLeading } from '@/lib/rich-text'
 
 export const revalidate = 3600
@@ -52,7 +52,7 @@ export default async function OrigenPage({ params }: Props) {
   const producer = producerLabel(c.productor)
   const { taken, rest } = takeLeading(c.historia, ['h2'])
   const [before, after] = splitAfterParagraph(rest, 2)
-  const [arrivalTitle, ...arrival] = lines(f.text('como_llegar'))
+  const [arrivalTitle, ...arrival] = lines(f.value('como_llegar'))
   const gallery = (c.galeria ?? []).filter((item) => item.media?.url).slice(0, 3)
   const farmCafes = cafes.filter((cafe) => relationSlug(cafe.content.origen) === origen.slug)
   const fi = fields(inicio)
@@ -94,8 +94,15 @@ export default async function OrigenPage({ params }: Props) {
         />
         <div className="mt-6 mb-7 flex flex-col gap-4 lg:mt-10 lg:mb-12 lg:gap-[22px]">
           <span className="eyebrow eyebrow--lg">
-            <span {...f.attrs('region')}>{c.region.label}</span> · {f.text('municipio')}
-            {c.vereda ? <> · {f.text('vereda')}</> : null}
+            <span {...f.attrs('region')}>{c.region.label}</span>
+            {' · '}
+            <span {...f.attrs('municipio')}>{f.text('municipio')}</span>
+            {c.vereda ? (
+              <>
+                {' · '}
+                <span {...f.attrs('vereda')}>{f.text('vereda')}</span>
+              </>
+            ) : null}
           </span>
           <h1 className="m-0 font-display text-(length:--fl-finca) leading-[0.88] font-black tracking-[-0.005em] text-balance uppercase">
             Finca {name}
@@ -111,7 +118,14 @@ export default async function OrigenPage({ params }: Props) {
             className="aspect-[3/2]! md:aspect-[21/9]!"
           />
           <div aria-hidden="true" className="stamp top-6 right-5 -rotate-4 lg:top-11 lg:right-12">
-            <span className="stamp__big">{altitudeRange(c.altitud_min, c.altitud_max)}</span>
+            <span className="stamp__big">
+              <span {...f.attrs('altitud_min')}>{formatInt(c.altitud_min)}</span>
+              {c.altitud_max !== c.altitud_min ? (
+                <>
+                  –<span {...f.attrs('altitud_max')}>{formatInt(c.altitud_max)}</span>
+                </>
+              ) : null}
+            </span>
             <span className="stamp__small">msnm</span>
           </div>
         </div>
@@ -146,7 +160,8 @@ export default async function OrigenPage({ params }: Props) {
                 sizes="(min-width: 1024px) 420px, 100vw"
               />
               <span className="font-story text-[16px] leading-[1.4] text-tinta-2 italic">
-                {cleanStega(c.productor)}, en el beneficiadero de {cleanStega(c.nombre)}.
+                <span {...f.attrs('productor')}>{f.text('productor')}</span>, en el beneficiadero de{' '}
+                <span {...f.attrs('nombre')}>{f.text('nombre')}</span>.
               </span>
             </div>
           ) : (
@@ -170,7 +185,9 @@ export default async function OrigenPage({ params }: Props) {
                   «{f.text('cita')}»
                 </p>
                 <footer className="mt-4">
-                  <span className="eyebrow lg:text-[14px]!">{cleanStega(c.productor)}</span>
+                  <span className="eyebrow lg:text-[14px]!" {...f.attrs('productor')}>
+                    {f.text('productor')}
+                  </span>
                 </footer>
               </blockquote>
             ) : null}
@@ -209,17 +226,20 @@ export default async function OrigenPage({ params }: Props) {
           {arrivalTitle ? (
             <div className="flex flex-col gap-[18px]">
               <span className="eyebrow">Cómo llegar</span>
-              <h3 className="m-0 font-display text-[32px] leading-[0.95] font-extrabold uppercase lg:text-[40px]">
-                {arrivalTitle}
-              </h3>
-              {arrival.map((line, i) => (
-                <p
-                  key={i}
-                  className="m-0 font-story text-[17px] leading-[1.55] text-pretty text-tinta-2 lg:text-[19px]"
-                >
-                  {line}
-                </p>
-              ))}
+              {/* One LONG_TEXT shown as a title and lines: the tag covers them all. */}
+              <div className="flex flex-col gap-[18px]" {...f.attrs('como_llegar')}>
+                <h3 className="m-0 font-display text-[32px] leading-[0.95] font-extrabold uppercase lg:text-[40px]">
+                  {arrivalTitle}
+                </h3>
+                {arrival.map((line, i) => (
+                  <p
+                    key={i}
+                    className="m-0 font-story text-[17px] leading-[1.55] text-pretty text-tinta-2 lg:text-[19px]"
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
               {c.mapa_url ? (
                 <div>
                   <ArrowLink href={f.value('mapa_url') ?? '#'} {...f.attrs('mapa_url')}>
