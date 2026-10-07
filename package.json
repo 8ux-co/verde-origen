@@ -22,9 +22,9 @@
   },
   "dependencies": {
     "@8ux-co/eelzap": "^0.10.1",
-    "next": "16.3.8",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "next": "16.4.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@8ux-co/eelzap-cli": "^0.10.0",
