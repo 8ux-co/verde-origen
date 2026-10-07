@@ -461,6 +461,12 @@
     pointer-events: none;
   }
 
+  /* A field tagged inside a stamp stays clickable for Zap's Editar and
+     Comentar; the stamp itself still lets clicks through to the photo. */
+  .stamp [data-zap] {
+    pointer-events: auto;
+  }
+
   .stamp__big {
     display: block;
     font-weight: 900;
