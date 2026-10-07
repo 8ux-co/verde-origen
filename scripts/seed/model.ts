@@ -48,8 +48,12 @@ export interface ModelDef {
   key: string
   name: string
   description: string
-  /** «Ruta en tu sitio»: set in Zap's settings (not on the public API). */
-  previewPath: string
+  /**
+   * «Ruta en tu sitio»: set in Zap's settings (not on the public API). Null
+   * on a document used across the whole site (Configuración): Zap previews it
+   * on the home page and it claims no page of its own.
+   */
+  previewPath: string | null
   sections: string[]
   fields: FieldDef[]
 }
@@ -508,7 +512,8 @@ const configuracion: ModelDef = {
   key: 'configuracion',
   name: 'Configuración',
   description: 'Encabezado, pie de página y datos de contacto de todo el sitio.',
-  previewPath: '/',
+  // Site-wide: no page of its own (Inicio is `/`).
+  previewPath: null,
   sections: ['Encabezado', 'Pie de página', 'Contacto', 'Legal'],
   fields: [
     {
