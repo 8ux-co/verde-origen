@@ -17,3 +17,9 @@ export const GET = createDraftModeRoute({
   draftMode,
   cookies,
 })
+
+/**
+ * Since eelzap 0.11 the client keeps the token out of the URL: it sends it in
+ * the fragment and the page posts it here, so the route answers POST too.
+ */
+export const POST = GET

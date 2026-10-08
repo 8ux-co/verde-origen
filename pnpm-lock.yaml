@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@8ux-co/eelzap':
-        specifier: ^0.10.1
-        version: 0.10.1(next@16.4.0(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
+        specifier: ^0.11.0
+        version: 0.11.0(next@16.4.0(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)
       next:
         specifier: 16.4.0
         version: 16.4.0(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
@@ -61,6 +61,18 @@ packages:
 
   '@8ux-co/eelzap@0.10.1':
     resolution: {integrity: sha512-CzYlQxMy3ALm7a3ukuqonfhV0nN1Hv7kqR7G3PCrItgCcHbBcy0xbgnfKwyihs7iNox1YASWHgZE1BLkLYRv9A==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      next: '>=14'
+      react: '>=18'
+    peerDependenciesMeta:
+      next:
+        optional: true
+      react:
+        optional: true
+
+  '@8ux-co/eelzap@0.11.0':
+    resolution: {integrity: sha512-j0Moz4cnmPjIWIcezahuI37g4ZahN7j6KjS839WB2dSZH9B9AvBDOYTBBD30rX3GLvCosSVEeEtecc/XaqPrng==}
     engines: {node: '>=18'}
     peerDependencies:
       next: '>=14'
@@ -1334,6 +1346,11 @@ snapshots:
       - react
 
   '@8ux-co/eelzap@0.10.1(next@16.4.0(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
+    optionalDependencies:
+      next: 16.4.0(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      react: 19.3.0
+
+  '@8ux-co/eelzap@0.11.0(next@16.4.0(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0))(react@19.3.0)':
     optionalDependencies:
       next: 16.4.0(@types/node@22.20.5)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       react: 19.3.0

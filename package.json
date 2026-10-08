@@ -21,7 +21,7 @@
     "cms:types": "node --env-file-if-exists=.env.local node_modules/@8ux-co/eelzap-cli/dist/cli.js codegen && prettier --write src/generated/cms"
   },
   "dependencies": {
-    "@8ux-co/eelzap": "^0.10.1",
+    "@8ux-co/eelzap": "^0.11.0",
     "next": "16.4.0",
     "react": "19.3.0",
     "react-dom": "19.3.0"
